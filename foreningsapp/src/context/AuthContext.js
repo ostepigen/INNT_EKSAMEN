@@ -1,0 +1,1 @@
+// Holder styr på om brugeren er logget ind, og hvem de er

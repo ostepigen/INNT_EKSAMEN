@@ -1,0 +1,1 @@
+// fx til at vise en besked eller bolig info
