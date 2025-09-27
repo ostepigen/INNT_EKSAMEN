@@ -28,7 +28,7 @@ export default function TabNavigator() {
                     } else if (route.name === 'Booking') {
                         iconName = focused ? 'calendar' : 'calendar-outline';
                     } else if (route.name === 'Forening') {
-                        iconName = focused ? 'people' : 'business-outline';
+                        iconName = focused ? 'business' : 'business-outline';
                     } else if (route.name === 'Mig') {
                         iconName = focused ? 'person' : 'person-outline';
                     }
