@@ -6,7 +6,7 @@ import TabNavigator from "./src/navigation/TabNavigator";
 
 
 //lav her funktion til login/registrer authenticator 
-// så vi viser hvis bruger er logget ind?
+// så vi viser hvis bruger er logget ind? tnhthnt
 
 
 //
