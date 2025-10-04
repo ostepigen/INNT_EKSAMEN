@@ -1,20 +1,37 @@
+// src/screens/Booking/BookingScreen.js
+import React from 'react';
+import { View, Text, Pressable, ScrollView } from 'react-native';
+import GS, { SPACING, cardVariant } from '../../styles/globalstyles';
 
-import React, { useEffect, useState } from "react";
-import { View, Text, ScrollView } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+const RESOURCES = [
+  { id: 'laundry', label: 'Vaskekælder' },
+  { id: 'room',    label: 'Fælleslokale' },
+];
 
+export default function BookingScreen({ navigation }) {
+  return (
+    <View style={GS.screen}>
+      <ScrollView contentContainerStyle={[GS.content, { paddingBottom: SPACING.xl }]}>
+        <Text style={[GS.h1, { marginBottom: SPACING.lg }]}>Booking</Text>
+        <Text style={[GS.help, { marginBottom: SPACING.xl }]}>Vælg hvad du vil booke</Text>
 
-export default function BookingScreen() {
-    return (
-        <SafeAreaView>
-            <ScrollView>
-                <Text>
-                    <View style={{ flex: 1, padding: 16 }}>
-                        <Text style={{ fontSize: 18, fontWeight: "bold" }}>Booking</Text>
-                        <Text>BOOKING SCREEN</Text>
-                    </View>
-                </Text>
-            </ScrollView>
-        </SafeAreaView>
-    )
+        {RESOURCES.map((r) => (
+          <View key={r.id} style={{ marginBottom: SPACING.lg }}>
+            <Pressable
+              style={cardVariant(false)}
+              onPress={() => navigation.navigate('BookingDetail', { resource: r })}
+            >
+              <Text style={GS.h2}>{r.label}</Text>
+              <View style={{ height: SPACING.sm }} />
+              <Text style={GS.help}>Tryk for at vælge dato og tidspunkt</Text>
+            </Pressable>
+          </View>
+        ))}
+
+        <Pressable onPress={() => navigation.navigate('MyBookings')} style={{ marginTop: SPACING.xl }}>
+          <Text style={GS.btnGhostText}>Se mine bookinger</Text>
+        </Pressable>
+      </ScrollView>
+    </View>
+  );
 }
