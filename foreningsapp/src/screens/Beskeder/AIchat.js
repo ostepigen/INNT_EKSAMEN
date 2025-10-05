@@ -2,10 +2,11 @@
 //brugeren kan skrive spørgsmål til en AI bot og få svar tilbage
 //input fra tekst sendes
 import React, { useEffect, useState } from "react";
-import { StyleSheet, View, Text, ScrollView, TouchableOpacity, KeyboardAvoidingView, Platform } from "react-native";
+import { View, Text, ScrollView, TouchableOpacity, KeyboardAvoidingView, Platform } from "react-native";
 import { TextInput } from "react-native-gesture-handler";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { HUSREGLER_DOKUMENT } from "../../data/husregler";
+import GS from "../../styles/globalstyles";
 
 //nøgle til open ai
 // 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
@@ -132,17 +133,17 @@ export default function ChatScreen() {
     }
 
     return (
-        //keyboardAvoidingView for at undgå at tastaturet dækker input feltet.....
+        //keyboardAvoidingView for at undgå at tastaturet दækker input feltet
         <KeyboardAvoidingView 
-            style={styles.container}
+            style={GS.chatContainer}
             behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-            keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 20}
+            keyboardVerticalOffset={Platform.OS === 'ios' ? 120 : 20}
         >
             <ScrollView 
                 style={{ flex: 1, padding: 20 }} 
                 contentContainerStyle={{ paddingBottom: 100 }}
-                keyboardShouldPersistTaps="handled"
-            >
+                keyboardShouldPersistTaps="handled">
+                
                 <Text style={{ fontSize: 18, fontWeight: 'bold', marginBottom: 10 }}>AI Chat</Text>
                 
                 {chatHistorik.length === 0 && (
@@ -154,14 +155,14 @@ export default function ChatScreen() {
                 {/* Vis alle beskeder i historikken */}
                 {chatHistorik.map((besked) => (
                     <View key={besked.id} style={[
-                        styles.messageContainer,
-                        besked.type === 'user' ? styles.userMessage : 
-                        besked.type === 'ai' ? styles.aiMessage : styles.errorMessage
+                        GS.messageContainer,
+                        besked.type === 'user' ? GS.userMessage : 
+                        besked.type === 'ai' ? GS.aiMessage : GS.errorMessage
                     ]}>
                         <Text style={[
-                            styles.messageHeader,
-                            besked.type === 'user' ? styles.userHeader : 
-                            besked.type === 'ai' ? styles.aiHeader : styles.errorHeader
+                            GS.messageHeader,
+                            besked.type === 'user' ? GS.userHeader : 
+                            besked.type === 'ai' ? GS.aiHeader : GS.errorHeader
                         ]}>
                             {besked.type === 'user' ? '🧐 Dig:' : 
                              besked.type === 'ai' ? '🧐 AI Bestyrelsesmedlem:' : '⚠️ Fejl:'}
@@ -178,21 +179,21 @@ export default function ChatScreen() {
             </ScrollView>
 
             {/* Input sektion der forbliver i bunden */}
-            <View style={styles.inputContainer}>
+            <View style={GS.chatInputContainer}>
                 <View style={{ flex: 1, marginRight: 10 }}>
                     <TextInput 
                         placeholder="Hvad har du brug for hjælp til?" 
                         onChangeText={tekstInputAI} 
                         value={inputBesked}
-                        style={styles.textInput}
+                        style={GS.chatTextInput}
                         multiline={false}
                         returnKeyType="send"
                         onSubmitEditing={sendKnapAI}
                     />
                 </View>
 
-                <TouchableOpacity onPress={sendKnapAI} disabled={loading} style={styles.sendButton}>
-                    <Text style={{ color: 'white', fontWeight: 'bold' }}>{loading ? '...' : 'Send'}</Text>
+                <TouchableOpacity onPress={sendKnapAI} disabled={loading} style={GS.chatSendButton}>
+                    <Text style={GS.chatSendButtonText}>{loading ? '...' : 'Send'}</Text>
                 </TouchableOpacity>
             </View>
         </KeyboardAvoidingView>
@@ -200,81 +201,4 @@ export default function ChatScreen() {
     )
 }
 
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#fff',
-    },
-    inputContainer: {
-        flexDirection: 'row',
-        padding: 10,
-        paddingBottom: Platform.OS === 'ios' ? 30 : 10,
-        backgroundColor: '#fff',
-        borderTopWidth: 1,
-        borderTopColor: '#e0e0e0',
-        alignItems: 'center',
-    },
-    textInput: {
-        height: 40,
-        borderColor: '#255d32ff',
-        borderWidth: 1,
-        borderRadius: 20,
-        paddingHorizontal: 15,
-        backgroundColor: '#f9f9f9',
-    },
-    sendButton: {
-        backgroundColor: '#255d32ff',
-        paddingHorizontal: 20,
-        paddingVertical: 10,
-        borderRadius: 20,
-        minWidth: 60,
-        alignItems: 'center',
-    },
-    messageContainer: {
-        marginVertical: 8,
-        padding: 12,
-        borderRadius: 12,
-        maxWidth: '85%',
-    },
-    userMessage: {
-        backgroundColor: '#255d32ff',
-        alignSelf: 'flex-end',
-    },
-    aiMessage: {
-        backgroundColor: '#f0f0f0',
-        alignSelf: 'flex-start',
-        borderWidth: 1,
-        borderColor: '#e0e0e0',
-    },
-    errorMessage: {
-        backgroundColor: '#ffebee',
-        alignSelf: 'flex-start',
-        borderWidth: 1,
-        borderColor: '#ffcdd2',
-    },
-    messageHeader: {
-        fontSize: 12,
-        fontWeight: 'bold',
-        marginBottom: 4,
-    },
-    userHeader: {
-        color: 'white',
-    },
-    aiHeader: {
-        color: '#255d32ff',
-    },
-    errorHeader: {
-        color: '#d32f2f',
-    },
-    messageText: {
-        fontSize: 14,
-        lineHeight: 20,
-    },
-    loadingContainer: {
-        alignSelf: 'flex-start',
-        backgroundColor: '#f9f9f9',
-        padding: 12,
-        borderRadius: 12,
-        marginVertical: 8,
-    },
-});
+// Alle styles er nu flyttet til globalstyles.js
