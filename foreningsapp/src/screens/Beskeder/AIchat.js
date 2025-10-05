@@ -5,6 +5,7 @@ import React, { useEffect, useState } from "react";
 import { StyleSheet, View, Text, ScrollView, TouchableOpacity, KeyboardAvoidingView, Platform } from "react-native";
 import { TextInput } from "react-native-gesture-handler";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { HUSREGLER_DOKUMENT } from "../../data/husregler";
 
 //nøgle til open ai
 // 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
@@ -15,19 +16,9 @@ export default function ChatScreen() {
     const [loading, setLoading] = useState(false);
     const [chatHistorik, setChatHistorik] = useState([]); // Array til at gemme alle beskeder
 
-    // Fast dokument som AI'en altid har adgang til
-    const foreningsKnowledge = `
-    BOLIGFORENING KNOWLEDGE BASE:    
-    REGLER:
-    - Ingen kæledyr over 10 kg
-    - Musik skal være dæmpet efter kl.19 i hverdage og kl. 22 i weekender
-    - Rygning kun på altan eller udenfor
-    
-    KONTAKT:
-    - Vicevært: 12 34 56 78
-    - Bestyrelse: bestyrelse@forening.dk
-    - Akut reparationer: Ring altid til vicevært først
-    `;
+    // Henter husregler fra separat fil
+    // TODO: Dette skal senere hentes fra database
+    const foreningsKnowledge = HUSREGLER_DOKUMENT;
 
     const sendKnapAI = async () => {
         if (!inputBesked.trim()) return; // Undgå tomme requests
