@@ -140,14 +140,14 @@ export default function ChatScreen() {
             keyboardVerticalOffset={Platform.OS === 'ios' ? 120 : 20}
         >
             <ScrollView 
-                style={{ flex: 1, padding: 20 }} 
-                contentContainerStyle={{ paddingBottom: 100 }}
+                style={GS.chatScrollView} 
+                contentContainerStyle={GS.chatScrollContent}
                 keyboardShouldPersistTaps="handled">
                 
-                <Text style={{ fontSize: 18, fontWeight: 'bold', marginBottom: 10 }}>AI Chat</Text>
+                <Text style={GS.chatTitle}>AI Chat</Text>
                 
                 {chatHistorik.length === 0 && (
-                    <Text style={{ color: '#255d32ff', fontStyle: 'italic', textAlign: 'center', marginTop: 50 }}>
+                    <Text style={GS.chatPlaceholder}>
                         Stil et spørgsmål til AI bestyrelsesmedlemmet
                     </Text>
                 )}
@@ -167,20 +167,20 @@ export default function ChatScreen() {
                             {besked.type === 'user' ? '🧐 Dig:' : 
                              besked.type === 'ai' ? '🧐 AI Bestyrelsesmedlem:' : '⚠️ Fejl:'}
                         </Text>
-                        <Text style={styles.messageText}>{besked.message}</Text>
+                        <Text style={GS.messageText}>{besked.message}</Text>
                     </View>
                 ))}
                 {/*AI tænker */}
                 {loading && (
-                    <View style={styles.loadingContainer}>
-                        <Text style={{ color: '#255d32ff' }}>AI bestyrelsesmedlem tænker over det bedste svar...</Text>
+                    <View style={GS.loadingContainer}>
+                        <Text style={GS.loadingText}>AI bestyrelsesmedlem tænker over det bedste svar...</Text>
                     </View>
                 )}
             </ScrollView>
 
             {/* Input sektion der forbliver i bunden */}
             <View style={GS.chatInputContainer}>
-                <View style={{ flex: 1, marginRight: 10 }}>
+                <View style={GS.chatInputWrapper}>
                     <TextInput 
                         placeholder="Hvad har du brug for hjælp til?" 
                         onChangeText={tekstInputAI} 

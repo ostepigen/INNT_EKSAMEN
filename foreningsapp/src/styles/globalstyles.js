@@ -7,6 +7,7 @@ export const COLORS = {
   border:    '#E6E8EC',
   text:      '#111827',
   subtext:   '#6B7280',
+  textSecondary: '#6B7280',
   primary:   '#255D32',
   primary50: '#E6EFE9',
   danger:    '#D33',
@@ -333,6 +334,34 @@ const GS = StyleSheet.create({
     fontSize: 14,
     color: '#999',
     fontStyle: 'italic',
+  },
+
+  // Additional AI Chat styles
+  chatScrollView: {
+    flex: 1,
+    padding: 20,
+  },
+  chatScrollContent: {
+    paddingBottom: 100,
+  },
+  chatTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 10,
+    color: COLORS.text,
+  },
+  chatPlaceholder: {
+    color: COLORS.primary,
+    fontStyle: 'italic',
+    textAlign: 'center',
+    marginTop: 50,
+  },
+  loadingText: {
+    color: COLORS.primary,
+  },
+  chatInputWrapper: {
+    flex: 1,
+    marginRight: 10,
   },
 });
 
