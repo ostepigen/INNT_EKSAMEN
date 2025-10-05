@@ -10,8 +10,13 @@
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.2",
+<<<<<<< Updated upstream
     "@react-native-async-storage/async-storage": "^2.2.0",
     "@react-native-community/datetimepicker": "^8.4.5",
+=======
+    "@react-native-async-storage/async-storage": "2.2.0",
+    "@react-native-community/datetimepicker": "8.4.4",
+>>>>>>> Stashed changes
     "@react-native-vector-icons/ionicons": "^12.3.0",
     "@react-navigation/bottom-tabs": "^7.4.7",
     "@react-navigation/elements": "^2.6.4",
@@ -20,6 +25,7 @@
     "@react-navigation/stack": "^7.4.8",
     "expo": "~54.0.0",
     "expo-status-bar": "~3.0.8",
+    "firebase": "^12.3.0",
     "react": "19.1.0",
     "react-native": "0.81.4",
     "react-native-gesture-handler": "~2.28.0",
