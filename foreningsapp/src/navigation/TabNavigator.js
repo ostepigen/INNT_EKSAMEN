@@ -3,10 +3,9 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import ForsideScreen from "../screens/Forside/ForsideScreen";
-import BeskederScreen from "../screens/Beskeder/BeskederScreen";
+import BeskederStack from "./BeskederStack";
 import MinForeningScreen from "../screens/MinForening/MinForeningScreen";
 import MinBoligStack from "./MinBoligStack";
-import AIchat from '../screens/Beskeder/AIchat';
 import BookingStack from "../navigation/BookingStack";
 
 
@@ -41,11 +40,10 @@ export default function TabNavigator() {
             })}
         >
             <Tab.Screen name="Forside" component={ForsideScreen} />
-            <Tab.Screen name="Beskeder" component={BeskederScreen} />
+            <Tab.Screen name="Beskeder" component={BeskederStack} />
             <Tab.Screen name="Booking" component={BookingStack} />
             <Tab.Screen name="Forening" component={MinForeningScreen} />
             <Tab.Screen name="Mig" component={MinBoligStack} />
-            <Tab.Screen name="AI Chat" component={AIchat} />
         </Tab.Navigator>
         );
     }
