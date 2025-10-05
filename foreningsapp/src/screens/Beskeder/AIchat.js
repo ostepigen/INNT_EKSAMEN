@@ -16,17 +16,17 @@ export default function ChatScreen() {
     const [loading, setLoading] = useState(false);
     const [chatHistorik, setChatHistorik] = useState([]); // Array til at gemme alle beskeder
 
-    // Henter husregler fra separat fil
-    // TODO: Dette skal senere hentes fra database
+    //Henter husregler fra separat fil
+    //TODO: Dette skal senere hentes fra database
     const foreningsKnowledge = HUSREGLER_DOKUMENT;
 
     const sendKnapAI = async () => {
-        if (!inputBesked.trim()) return; // Undgå tomme requests
+        if (!inputBesked.trim()) return; //Undgå tomme requests
         
         const brugerBesked = inputBesked.trim();
         console.log("Brugerens besked: " + brugerBesked);
         
-        // Tilføj brugerens besked til historik med det samme
+        //Tilføj brugerens besked til historik med det samme
         const nyBrugerBesked = {
             id: Date.now(),
             type: 'user',
@@ -36,10 +36,10 @@ export default function ChatScreen() {
         setChatHistorik(prev => [...prev, nyBrugerBesked]);
         
         setLoading(true);
-        setInputBesked(""); // Ryd input felt med det samme
+        setInputBesked(""); //Ryd input felt med det samme
         
         try {
-            // OPTIMERET TIL AT SPARE PENGE - Bruger GPT-3.5-turbo (billigere end GPT-4)
+            //OPTIMERET TIL AT SPARE PENGE - Bruger GPT-3.5-turbo (billigere end GPT-4)
             const response = await fetch('https://api.openai.com/v1/chat/completions', {
                 method: 'POST',
                 headers: {
@@ -132,13 +132,17 @@ export default function ChatScreen() {
     }
 
     return (
-        // keyboardAvoidingView for at undgå at tastaturet dækker input feltet
+        //keyboardAvoidingView for at undgå at tastaturet dækker input feltet.....
         <KeyboardAvoidingView 
             style={styles.container}
             behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-            keyboardVerticalOffset={Platform.OS === 'ios' ? 60 : 0}
+            keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 20}
         >
-            <ScrollView style={{ flex: 1, padding: 20 }} contentContainerStyle={{ paddingBottom: 20 }}>
+            <ScrollView 
+                style={{ flex: 1, padding: 20 }} 
+                contentContainerStyle={{ paddingBottom: 100 }}
+                keyboardShouldPersistTaps="handled"
+            >
                 <Text style={{ fontSize: 18, fontWeight: 'bold', marginBottom: 10 }}>AI Chat</Text>
                 
                 {chatHistorik.length === 0 && (
@@ -165,7 +169,7 @@ export default function ChatScreen() {
                         <Text style={styles.messageText}>{besked.message}</Text>
                     </View>
                 ))}
-                
+                {/*AI tænker */}
                 {loading && (
                     <View style={styles.loadingContainer}>
                         <Text style={{ color: '#255d32ff' }}>AI bestyrelsesmedlem tænker over det bedste svar...</Text>
@@ -173,7 +177,7 @@ export default function ChatScreen() {
                 )}
             </ScrollView>
 
-            {/** Input sektion der forbliver i bunden */}
+            {/* Input sektion der forbliver i bunden */}
             <View style={styles.inputContainer}>
                 <View style={{ flex: 1, marginRight: 10 }}>
                     <TextInput 
