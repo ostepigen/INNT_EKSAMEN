@@ -1,9 +1,15 @@
 //
 import React, { useEffect, useState } from "react";
-import { View, Text, ScrollView, TouchableOpacity } from "react-native";
+import { View, Text, ScrollView, TouchableOpacity, Image } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import GS from "../../styles/globalstyles";
+
+
+//AI billede fra Cloudinary (af en kvinde, som er bestyrelsesmedlem)
+const TEST_AI_BILLEDE = "https://res.cloudinary.com/dsjoirhgw/image/upload/c_fill,w_50,h_50,q_auto/v1759848969/Sk%C3%A6rmbillede_2025-10-07_kl._16.54.16_kyuxcc.png";
+
+
 
 export default function BeskederScreen({ navigation }) {
     return (
@@ -23,15 +29,21 @@ export default function BeskederScreen({ navigation }) {
                         </TouchableOpacity>
                     </View>
 
-                    {/* TouchableOpacity for AI chat knap */}
+
+                    {/* TouchableOpacity til NY AI CHAT */}
                     <TouchableOpacity
                         style={GS.aiChatButton}
-                        onPress={() => navigation.navigate('AIChat')}
+                        onPress={() => navigation.navigate('NYAIChat')}
                     >
-                        {/* View til AI chatten */}
+                        {/* View til NY AI chatten */}
                         <View style={GS.aiChatContent}>
                             <View style={GS.aiIcon}>
-                                <Text style={GS.aiEmoji}>🙋🏻‍♀️</Text>
+
+                                      {/* billede fra cloudinary */}
+                                      <Image
+                                          source={{ uri: TEST_AI_BILLEDE }}
+                                          style={GS.aiImage}
+                                      />
                             </View>
                             <View style={GS.aiTextContainer}>
                                 <Text style={GS.aiTitle}>AI Bestyrelsesmedlem</Text>
@@ -42,22 +54,16 @@ export default function BeskederScreen({ navigation }) {
                     </TouchableOpacity>
 
 
-                    {/* View til ulæste beskeder */}
+                    {/* View til modtagede beskeder */}
                     <View style={GS.beskederSection}>
-                        <Text style={GS.sectionTitle}>Ulæste beskeder</Text>
-                        <Text style={GS.sectionPlaceholder}>Ingen nye beskeder</Text>
-                    </View>
-
-                    {/* View til gamle beskeder */}
-                    <View style={GS.beskederSection}>
-                        <Text style={GS.sectionTitle}>Tidligere beskeder</Text>
-                        <Text style={GS.sectionPlaceholder}>Ingen tidligere beskeder</Text>
+                        <Text style={GS.h2}>Modtagede beskeder</Text>
+                        <Text style={GS.sectionPlaceholder}>Ulæste beskeder vil blive vist først og ældre under</Text>
                     </View>
 
 
                          {/* View til sendte beskeder */}
                     <View style={GS.beskederSection}>
-                        <Text style={GS.sectionTitle}>Sendte beskeder</Text>
+                        <Text style={GS.h2}>Sendte beskeder</Text>
                         <Text style={GS.sectionPlaceholder}>Ingen sendte beskeder</Text>
                     </View>
                 </View>

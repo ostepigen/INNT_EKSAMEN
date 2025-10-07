@@ -7,24 +7,65 @@
 // kalder de mindre komponenter 
 
 import React, { useEffect, useState } from "react";
-import { View, Text, StyleSheet, Button } from "react-native";
+import { View, Text, ScrollView, TouchableOpacity } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
+
+import GS from "../../styles/globalstyles";
+import { SPACING } from "../../styles/globalstyles";
 
 
 export default function MinBoligHome({ navigation }) {
-    return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Min bolig og profil</Text>
-      <Button title="Min profil" onPress={() => navigation.navigate("Profil")} />
-      <Button title="Dokumenter" onPress={() => navigation.navigate("Dokumenter")} />
-      <Button title="Økonomi" onPress={() => navigation.navigate("Økonomi")} />
-      <Button title="Boligoplysninger" onPress={() => navigation.navigate("Boligoplysninger")} />
-    </View>
-    )
+  return (
+    <SafeAreaView style={GS.beskederContainer}>
+      <ScrollView style={GS.beskederScrollView}>
+        <View style={{ marginBottom: SPACING.xxl }}>
+          <View style={GS.beskederHeader}>
+            <Text style={GS.beskederTitle}>Hjemskærm til min profil og min bolig</Text>
+          </View>
+
+
+          {/* TouchableOpacity til min profil */}
+          <TouchableOpacity
+            style={GS.touchableOpacity}
+            onPress={() => navigation.navigate('Profil')}
+          >
+            <Ionicons name="person-outline" style={GS.icon} />
+            <Text style={GS.h2}>Profil</Text>
+          </TouchableOpacity>
+
+          {/* TouchableOpacity til min dokumenter */}
+          <TouchableOpacity
+            style={GS.touchableOpacity}
+            onPress={() => navigation.navigate('Dokumenter')}
+          >
+            <Ionicons name="document-outline" style={GS.icon} />
+            <Text style={GS.h2}>Dokumenter</Text>
+          </TouchableOpacity>
+
+
+          {/* TouchableOpacity til min økonomi */}
+          <TouchableOpacity
+            style={GS.touchableOpacity}
+            onPress={() => navigation.navigate('Økonomi')}
+          >
+            <Ionicons name="cash-outline" style={GS.icon} />
+            <Text style={GS.h2}>Økonomi</Text>
+          </TouchableOpacity>
+
+
+          {/* TouchableOpacity til min Boligoplysninger */}
+          <TouchableOpacity
+            style={GS.touchableOpacity}
+            onPress={() => navigation.navigate('Boligoplysninger')}
+          >
+            <Ionicons name="home-outline" style={GS.icon} />
+            <Text style={GS.h2}>Boligoplysninger</Text>
+          </TouchableOpacity>
+
+        </View>
+      </ScrollView>
+    </SafeAreaView>
+  )
 
 }
-//ændrer styles til globalt stylesheet
-const styles = StyleSheet.create({
-  container: { flex: 1, padding: 16, justifyContent: "center" },
-  title: { fontSize: 22, fontWeight: "bold", marginBottom: 20, textAlign: "center" },
-});

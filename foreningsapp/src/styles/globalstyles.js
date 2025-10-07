@@ -3,7 +3,7 @@ import { StyleSheet } from 'react-native';
 
 export const COLORS = {
   bg:        '#f2f2f2',
-  card:      '#FFFFFF',
+  card:      '#c7c1bbff',
   border:    '#E6E8EC',
   text:      '#111827',
   subtext:   '#6B7280',
@@ -11,6 +11,7 @@ export const COLORS = {
   primary:   '#255D32',
   primary50: '#E6EFE9',
   danger:    '#D33',
+  icons:     '#255D32',
 };
 
 export const SPACING = {
@@ -81,6 +82,35 @@ const GS = StyleSheet.create({
   },
   btnGhostText: { color: COLORS.primary, fontWeight: '700' },
 
+  //ICONS
+  icon: { 
+    color: COLORS.primary,
+    fontSize: 24,
+    width: 30, // Fast bredde så alle ikoner starter samme sted
+    textAlign: 'left', // Venstrejusterer ikonet inden for den faste bredde
+  },
+
+  //TOUCHABLE OPACITY
+  touchableOpacity: {
+    backgroundColor: COLORS.card,
+    borderRadius: SPACING.r,
+    paddingVertical: SPACING.md,
+    paddingHorizontal: SPACING.xl,
+    alignItems: 'center',
+    justifyContent: 'flex-start', // Starter fra venstre i stedet for center
+    flexDirection: 'row',
+    gap: SPACING.sm,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    marginBottom: SPACING.xl, // Større spacing mellem TouchableOpacity elementer
+  },
+
+
+
+
+
+
+  //nedstående skal rettes og ændre til gloable
   //AI-Chat styles
   chatContainer: {
     flex: 1,
@@ -285,7 +315,7 @@ const GS = StyleSheet.create({
     fontWeight: '600',
   },
   aiChatButton: {
-    backgroundColor: '#f8f9fa',
+    backgroundColor: COLORS.card,
     borderRadius: 12,
     padding: 16,
     marginBottom: 24,
@@ -305,6 +335,11 @@ const GS = StyleSheet.create({
     alignItems: 'center',
     marginRight: 12,
   },
+  aiImage: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+  },
   aiEmoji: {
     fontSize: 24,
   },
@@ -312,14 +347,14 @@ const GS = StyleSheet.create({
     flex: 1,
   },
   aiTitle: {
-    fontSize: 16,
+    fontSize: 12,
     fontWeight: 'bold',
     color: '#255d32ff',
     marginBottom: 2,
   },
   aiSubtitle: {
     fontSize: 14,
-    color: '#666',
+    color: COLORS.textSecondary,
   },
   beskederSection: {
     marginBottom: 24,
@@ -362,6 +397,19 @@ const GS = StyleSheet.create({
   chatInputWrapper: {
     flex: 1,
     marginRight: 10,
+  },
+  
+  // Message avatar styles
+  messageHeaderContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 4,
+  },
+  messageAvatar: {
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    marginRight: 6,
   },
 });
 

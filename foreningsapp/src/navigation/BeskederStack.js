@@ -3,8 +3,8 @@ import React from "react";
 import { createStackNavigator } from '@react-navigation/stack';
 
 import BeskederScreen from "../screens/Beskeder/BeskederScreen";
-import AIchat from "../screens/Beskeder/AIchat";
 import NyBeskedScreen from "../screens/Beskeder/NyBeskedScreen";
+import NyAIchat from "../screens/Beskeder/NyAIchat";
 
 const Stack = createStackNavigator();
 
@@ -16,16 +16,18 @@ export default function BeskederStack() {
         component={BeskederScreen} 
         options={{headerShown: false}}
       />
-      <Stack.Screen 
-        name="AIChat" 
-        component={AIchat} 
-        options={{title: "AI Assistant"}}
-      />
-      <Stack.Screen 
+
+            <Stack.Screen 
         name="NyBesked" 
         component={NyBeskedScreen} 
         options={{title: "Ny besked"}}
       />
+      <Stack.Screen 
+        name="NYAIChat" 
+        component={NyAIchat} 
+          options={{title: "AI beskeder"}}
+      />
+
         </Stack.Navigator>
     );
 }
