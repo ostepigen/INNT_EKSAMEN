@@ -1,26 +1,28 @@
-// src/screens/Booking/MyBookingsScreen.js
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react'; 
 import { View, Text, FlatList, Pressable, Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import GS, { SPACING, COLORS, SHADOW } from '../../styles/globalstyles';
 
-const STORAGE_KEY = 'BOOKINGS_V1';
+const STORAGE_KEY = 'BOOKINGS_V1'; // Nøgle til at gemme/hente bookinger lokalt
+
+/* Vi har valgt at gøre brug asyncStorga bare i denne omgang for at vise, hvordan det gemmes. 
+Vi kommer til at ændre det så det gemmes i en database*/ 
 
 export default function MyBookingsScreen() {
-  const [data, setData] = useState([]);
+  const [data, setData] = useState([]); // Gemmer listen af bookinger
 
   async function load() {
     const raw = await AsyncStorage.getItem(STORAGE_KEY);
-    setData(raw ? JSON.parse(raw) : []);
+    setData(raw ? JSON.parse(raw) : []); // Læs og konverter gemte bookinger
   }
-  useEffect(() => { load(); }, []);
+  useEffect(() => { load(); }, []); // Hent data ved første visning
 
   async function clearAll() {
     Alert.alert('Slet alle', 'Vil du slette alle bookinger?', [
       { text: 'Annullér', style: 'cancel' },
       { text: 'Slet', style: 'destructive', onPress: async () => {
-          await AsyncStorage.removeItem(STORAGE_KEY);
-          load();
+          await AsyncStorage.removeItem(STORAGE_KEY); // Fjern alt fra lageret
+          load(); // Opdater visningen
         } },
     ]);
   }
@@ -42,7 +44,7 @@ export default function MyBookingsScreen() {
           data={data}
           keyExtractor={(it) => it.id}
           renderItem={renderItem}
-          ListEmptyComponent={<Text style={GS.help}>Ingen bookinger endnu.</Text>}
+          ListEmptyComponent={<Text style={GS.help}>Ingen bookinger endnu.</Text>} // Vises hvis listen er tom
           contentContainerStyle={{ paddingBottom: SPACING.xxl }}
         />
 

@@ -1,4 +1,4 @@
-// src/styles/globalstyles.js
+
 import { StyleSheet } from 'react-native';
 
 export const COLORS = {

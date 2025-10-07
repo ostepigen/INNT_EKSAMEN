@@ -1,4 +1,4 @@
-// src/navigation/BookingStack.js
+
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import BookingScreen from '../screens/Booking/BookingScreen';
 import BookingDetailScreen from '../screens/Booking/BookingDetailScreen';
