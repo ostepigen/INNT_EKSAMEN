@@ -105,6 +105,16 @@ const GS = StyleSheet.create({
     marginBottom: SPACING.xl, // Større spacing mellem TouchableOpacity elementer
   },
 
+  //OPSLAGSTAVLE
+  opslagContainer: {
+    backgroundColor: COLORS.card,
+    borderRadius: SPACING.r,
+    padding: SPACING.lg,
+    marginBottom: SPACING.lg,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+  },
+
 
 
 
