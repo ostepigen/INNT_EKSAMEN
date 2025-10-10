@@ -9,18 +9,21 @@ import { auth } from './src/services/firebase/db';
 import AuthScreen from './src/screens/Bruger/AuthScreen';
 import TabNavigator from './src/navigation/TabNavigator';
 
+// Opretter en Stack Navigator til at håndtere navigation mellem sider
 const Stack = createNativeStackNavigator();
 
 export default function App() {
+// State-variabler til at gemme den aktuelle bruger og initialiseringsstatus
   const [user, setUser] = useState(null);
   const [booted, setBooted] = useState(false);
 
+// useEffect lytter efter ændringer i brugerens loginstatus via Firebase Authentication
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (current) => {
-      setUser(current);
-      setBooted(true);
+      setUser(current); // Gemmer brugerdata, hvis der er logget ind
+      setBooted(true); // Markerer, at appen er klar til at vise indhold
     });
-    return unsubscribe;
+    return unsubscribe; // Afmelder lytteren, når komponenten unmountes
   }, []);
 
   // Viser ikke noget før vi har tjekket auth status

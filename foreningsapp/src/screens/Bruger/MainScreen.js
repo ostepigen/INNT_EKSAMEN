@@ -5,9 +5,12 @@ import { signOut } from 'firebase/auth';
 import { auth } from '../services/firebase/db';
 import GS from '../styles/globalstyles';
 
+// Eksporterer komponenten 'MainScreen', som fungerer som hovedsiden efter login
 export default function MainScreen() {
+  // Henter den aktuelle brugers e-mail fra Firebase Authentication
   const userEmail = auth.currentUser?.email;
 
+  // Funktion der håndterer logud-processen
   const handleLogout = async () => {
     try {
       await signOut(auth);

@@ -4,10 +4,13 @@ import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../services/firebase/db';
 import GS from '../styles/globalstyles';
 
+// Eksporterer komponenten 'Login', som bruges til at håndtere brugerlogin 
 export default function Login() {
+// Opretter to state-variabler til at gemme brugerens input (email og kodeord)
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
+// Funktion der håndterer login-processen
   const handleLogin = async () => {
     try {
       await signInWithEmailAndPassword(auth, email, password);
@@ -17,6 +20,7 @@ export default function Login() {
     }
   };
 
+  // Returnerer det visuelle layout for login-siden
   return (
     <View style={[GS.card, { margin: 20 }]}>
       <Text style={GS.h2}>Login</Text>
