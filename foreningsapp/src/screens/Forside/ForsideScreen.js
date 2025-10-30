@@ -2,6 +2,9 @@ import React, { useEffect, useState } from "react";
 import { View, Text, ScrollView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import GlobalStyles from "../../styles/globalstyles";
+import { onAuthStateChanged } from 'firebase/auth';
+import { auth } from '../../services/firebase/db';
+import userService from '../../services/firebase/userService';
 
 //lege data til opslagftavle
 const TEST_OPSLAG = [
@@ -12,6 +15,34 @@ const TEST_OPSLAG = [
 
 
 export default function ForsideScreen() {
+    const [displayName, setDisplayName] = useState('');
+// Hent brugerens navn til velkomsthilsen
+    useEffect(() => {
+        const unsub = onAuthStateChanged(auth, async (user) => {
+            if (!user) {
+                setDisplayName('');
+                return;
+            }
+            try {
+                const profile = await userService.getUserProfile(user.uid);
+                if (profile && profile.name) {
+                    setDisplayName(profile.name);
+                } else if (user.displayName) {
+                    setDisplayName(user.displayName);
+                } else if (user.email) {
+                    const nameFromEmail = user.email.split('@')[0];
+                    setDisplayName(nameFromEmail);
+                } else {
+                    setDisplayName('');
+                }
+            } catch (err) {
+                console.warn('Failed to load user profile for greeting', err);
+                setDisplayName(user.displayName || user.email?.split('@')[0] || '');
+            }
+        });
+        return () => unsub();
+    }, []);
+
     return (
         <SafeAreaView>
             <ScrollView>
@@ -19,7 +50,7 @@ export default function ForsideScreen() {
                 <View>
                     {/* Velkomsthilsen */}
                     <View>
-                        <Text style={GlobalStyles.h2}>Hej "navn på bruger"</Text>
+                        <Text style={GlobalStyles.h2}>Hej {displayName ? displayName : 'bruger'}</Text>
                     </View>
 
                     <View>

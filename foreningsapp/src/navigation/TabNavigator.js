@@ -2,6 +2,7 @@
 //Forside, Beskeder, Min forening, Min bolig, Booking.
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import { TouchableOpacity, View } from 'react-native';
 import ForsideScreen from "../screens/Forside/ForsideScreen";
 import BeskederStack from "./BeskederStack";
 import MinForeningScreen from "../screens/MinForening/MinForeningScreen";
@@ -13,7 +14,7 @@ import BookingStack from "../navigation/BookingStack";
 
 const Tab = createBottomTabNavigator();
 
-export default function TabNavigator() {
+export default function TabNavigator({ enabled = true }) {
     return (
         <Tab.Navigator
             screenOptions={({ route }) => ({
@@ -39,11 +40,76 @@ export default function TabNavigator() {
                 tabBarInactiveTintColor: 'brown',
             })}
         >
-            <Tab.Screen name="Forside" component={ForsideScreen} />
-            <Tab.Screen name="Beskeder" component={BeskederStack} />
-            <Tab.Screen name="Booking" component={BookingStack} />
-            <Tab.Screen name="Forening" component={MinForeningScreen} />
-            <Tab.Screen name="Mig" component={MinBoligStack} />
+            <Tab.Screen
+                name="Forside"
+                component={ForsideScreen}
+                options={{
+                    tabBarButton: (props) => (
+                        <TouchableOpacity
+                            {...props}
+                            onPress={enabled ? props.onPress : undefined}
+                            activeOpacity={enabled ? 0.7 : 1}
+                            style={[props.style, !enabled && { opacity: 0.5 }]}
+                        />
+                    ),
+                }}
+            />
+            <Tab.Screen
+                name="Beskeder"
+                component={BeskederStack}
+                options={{
+                    tabBarButton: (props) => (
+                        <TouchableOpacity
+                            {...props}
+                            onPress={enabled ? props.onPress : undefined}
+                            activeOpacity={enabled ? 0.7 : 1}
+                            style={[props.style, !enabled && { opacity: 0.5 }]}
+                        />
+                    ),
+                }}
+            />
+            <Tab.Screen
+                name="Booking"
+                component={BookingStack}
+                options={{
+                    tabBarButton: (props) => (
+                        <TouchableOpacity
+                            {...props}
+                            onPress={enabled ? props.onPress : undefined}
+                            activeOpacity={enabled ? 0.7 : 1}
+                            style={[props.style, !enabled && { opacity: 0.5 }]}
+                        />
+                    ),
+                }}
+            />
+            <Tab.Screen
+                name="Forening"
+                component={MinForeningScreen}
+                options={{
+                    tabBarButton: (props) => (
+                        <TouchableOpacity
+                            {...props}
+                            onPress={enabled ? props.onPress : undefined}
+                            activeOpacity={enabled ? 0.7 : 1}
+                            style={[props.style, !enabled && { opacity: 0.5 }]}
+                        />
+                    ),
+                }}
+            />
+            <Tab.Screen
+                name="Mig"
+                component={MinBoligStack}
+                options={{
+                    tabBarButton: (props) => (
+                        <TouchableOpacity
+                            {...props}
+                            onPress={enabled ? props.onPress : undefined}
+                            activeOpacity={enabled ? 0.7 : 1}
+                            style={[props.style, !enabled && { opacity: 0.5 }]}
+                        />
+                    ),
+                }}
+            />
         </Tab.Navigator>
         );
     }
