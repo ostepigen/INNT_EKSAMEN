@@ -86,28 +86,6 @@ export default function ForsideScreen({ navigation }) {
                     </View>
                 </View>
 
-
-
-
-                <Text>
-                    <View style={{ flex: 1, padding: 12 }}>
-
-                        <View style={GlobalStyles.opslagstavle}>
-                            <Text style={GlobalStyles.overskrift}>OPSLAGSTAVLE</Text>
-
-                            <View><Text style={GlobalStyles.normaltekst}>Ting fra kalenderen</Text></View>
-
-                            <View><Text style={GlobalStyles.normaltekst}>Fremhævede beskeder</Text></View>
-
-                            <View><Text style={GlobalStyles.normaltekst}>Alle opslag</Text></View>
-                        </View>
-
-
-                
-
-
-                    </View>
-                </Text>
             </ScrollView>
         </SafeAreaView>
     )
