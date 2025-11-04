@@ -6,10 +6,10 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { onAuthStateChanged } from 'firebase/auth';
 
 import { auth } from './src/services/firebase/db';
-import {userService} from './src/services/firebase/userService';
-import {ProfilScreen} from './src/screens/MinBolig/ProfilScreen';
-import {AuthScreen} from './src/screens/Bruger/AuthScreen';
-import {TabNavigator} from './src/navigation/TabNavigator';
+import userService from './src/services/firebase/userService';
+import ProfilScreen from './src/screens/MinBolig/ProfilScreen';
+import AuthScreen from './src/screens/Bruger/AuthScreen';
+import TabNavigator from './src/navigation/TabNavigator';
 
 // Opretter en Stack Navigator til at håndtere navigation mellem sider
 const Stack = createNativeStackNavigator();

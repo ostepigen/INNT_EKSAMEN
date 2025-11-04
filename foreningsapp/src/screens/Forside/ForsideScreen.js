@@ -82,12 +82,7 @@ export default function ForsideScreen() {
                         </View>
 
 
-                        <View>
-                            <Text>
-                                Evt tilpasset (Har du solgt din bolig, er der ting du skal huske i forskellige faser, har kunne den komme op det det der skulle huskes)
-                                Brugertilpassede funktioner: ligesom man selv kan vælge hvad man ser på sin iphone kunne brugeren også selv tilpasse det. Feks hvis man gerne vil have at den viser hvilket tidspunkt på døgnet der er billigst strøm til at vaske
-                            </Text>
-                        </View>
+                
 
 
                     </View>

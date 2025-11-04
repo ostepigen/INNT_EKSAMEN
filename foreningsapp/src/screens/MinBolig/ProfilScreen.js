@@ -12,7 +12,9 @@ export default function ProfilScreen({ navigation }) {
     const [profile, setProfile] = useState({ name: '', address: '', phone: '', email: '' });
 
     useEffect(() => {
+        //
         const unsub = onAuthStateChanged(auth, async (u) => {
+            // Hvis bruger er logget ind, hent profil data
             if (u) {
                 setUser(u);
                 try {
