@@ -4,6 +4,7 @@ import { database } from './db';
 // Utility paths
 const usersPath = (uid) => `users/${uid}`;
 const messagesPath = (uid) => `messages/${uid}`;
+const sentMessagesPath = (uid) => `messages_sent/${uid}`;
 const bookingsPath = (uid) => `bookings/${uid}`;
 
 // --- Profile CRUD ---
@@ -33,13 +34,40 @@ export function listenToUserProfile(uid, cb) {
   return () => unsubscribe();
 }
 
+// --- Users listing (for recipient dropdown) ---
+export async function getAllUsers() {
+  const listRef = ref(database, `users`);
+  const snap = await get(listRef);
+  return snap.exists() ? snap.val() : {};
+}
+
+export function listenToUsers(cb) {
+  const listRef = ref(database, `users`);
+  const unsubscribe = onValue(listRef, (snapshot) => cb(snapshot.val()));
+  return () => unsubscribe();
+}
+
 // --- Messages ---
 export async function pushMessage(uid, message) {
   if (!uid) throw new Error('Missing uid');
+  // push to recipient
   const listRef = ref(database, messagesPath(uid));
   const newRef = await push(listRef);
-  await set(newRef, { ...message, createdAt: Date.now() });
-  return newRef.key;
+  const key = newRef.key;
+  const payload = { ...message, createdAt: Date.now() };
+  await set(newRef, payload);
+  // also write a copy to sender's sent folder (if senderUid provided)
+  try {
+    const senderUid = message.senderUid;
+    if (senderUid) {
+      const sentRef = ref(database, `${sentMessagesPath(senderUid)}/${key}`);
+      await set(sentRef, payload);
+    }
+  } catch (e) {
+    // don't fail the main write if sent copy fails
+    console.warn('Failed writing sent copy', e);
+  }
+  return key;
 }
 
 export async function getMessages(uid) {
@@ -47,6 +75,27 @@ export async function getMessages(uid) {
   const listRef = ref(database, messagesPath(uid));
   const snap = await get(listRef);
   return snap.exists() ? snap.val() : {};
+}
+
+export async function getSentMessages(uid) {
+  if (!uid) return {};
+  const listRef = ref(database, sentMessagesPath(uid));
+  const snap = await get(listRef);
+  return snap.exists() ? snap.val() : {};
+}
+
+export function listenToMessages(uid, cb) {
+  if (!uid) return () => {};
+  const listRef = ref(database, messagesPath(uid));
+  const unsubscribe = onValue(listRef, (snapshot) => cb(snapshot.val()));
+  return () => unsubscribe();
+}
+
+export function listenToSentMessages(uid, cb) {
+  if (!uid) return () => {};
+  const listRef = ref(database, sentMessagesPath(uid));
+  const unsubscribe = onValue(listRef, (snapshot) => cb(snapshot.val()));
+  return () => unsubscribe();
 }
 
 // --- Bookings (vasketider) ---
@@ -95,8 +144,13 @@ export default {
   listenToUserProfile,
   pushMessage,
   getMessages,
+  getSentMessages,
+  listenToMessages,
+  listenToSentMessages,
   pushBooking,
   getBookings,
+  getAllUsers,
+  listenToUsers,
   pushOpslag,
   getOpslag,
   listenToOpslag,

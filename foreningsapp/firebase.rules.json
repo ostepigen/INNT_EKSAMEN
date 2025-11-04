@@ -1,15 +1,27 @@
 {
   "rules": {
     "users": {
+      ".read": "auth != null",
       "$uid": {
-        ".read": "auth != null && auth.uid === $uid",
         ".write": "auth != null && auth.uid === $uid"
       }
     },
     "messages": {
       "$uid": {
         ".read": "auth != null && auth.uid === $uid",
-        ".write": "auth != null && auth.uid === $uid"
+        "$msgId": {
+          ".write": "auth != null && newData.child('recipientUid').val() === $uid && newData.child('senderUid').val() === auth.uid",
+          ".validate": "newData.hasChildren(['recipientUid','senderUid','subject','text','createdAt']) && newData.child('recipientUid').isString() && newData.child('recipientUid').val() === $uid && newData.child('senderUid').isString() && newData.child('senderUid').val() === auth.uid && newData.child('createdAt').isNumber()"
+        }
+      }
+    },
+    "messages_sent": {
+      "$uid": {
+        ".read": "auth != null && auth.uid === $uid",
+        "$msgId": {
+          ".write": "auth != null && newData.child('senderUid').val() === $uid && newData.child('recipientUid').isString()",
+          ".validate": "newData.hasChildren(['recipientUid','senderUid','subject','text','createdAt']) && newData.child('senderUid').isString() && newData.child('senderUid').val() === $uid && newData.child('createdAt').isNumber()"
+        }
       }
     },
     "bookings": {

@@ -4,6 +4,9 @@ import { View, Text, ScrollView, TouchableOpacity, Image } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import GS from "../../styles/globalstyles";
+import { auth } from '../../services/firebase/db';
+import { onAuthStateChanged } from 'firebase/auth';
+import userService from '../../services/firebase/userService';
 
 
 //AI billede fra Cloudinary (af en kvinde, som er bestyrelsesmedlem)
@@ -12,6 +15,49 @@ const TEST_AI_BILLEDE = "https://res.cloudinary.com/dsjoirhgw/image/upload/c_fil
 
 
 export default function BeskederScreen({ navigation }) {
+    const [received, setReceived] = useState([]);
+    const [sent, setSent] = useState([]);
+    const [users, setUsers] = useState({});
+
+    useEffect(() => {
+        let unsubMessages = null;
+        let unsubSent = null;
+        let unsubAuth = null;
+        unsubAuth = onAuthStateChanged(auth, async (u) => {
+            if (!u) {
+                setReceived([]); setSent([]); setUsers({});
+                return;
+            }
+            const uid = u.uid;
+            // load users map for name lookups
+            try {
+                const all = await userService.getAllUsers();
+                const map = all ? Object.keys(all).reduce((acc,k) => { acc[k] = all[k]; return acc; }, {}) : {};
+                setUsers(map);
+            } catch (e) {
+                console.warn('Failed loading users map', e);
+            }
+
+            unsubMessages = userService.listenToMessages(uid, (data) => {
+                const list = data ? Object.keys(data).map(k => ({ id: k, ...data[k] })) : [];
+                list.sort((a,b) => (b.createdAt || 0) - (a.createdAt || 0));
+                setReceived(list);
+            });
+
+            unsubSent = userService.listenToSentMessages(uid, (data) => {
+                const list = data ? Object.keys(data).map(k => ({ id: k, ...data[k] })) : [];
+                list.sort((a,b) => (b.createdAt || 0) - (a.createdAt || 0));
+                setSent(list);
+            });
+        });
+
+        return () => {
+            if (unsubMessages) unsubMessages();
+            if (unsubSent) unsubSent();
+            if (unsubAuth) unsubAuth();
+        };
+    }, []);
+
     return (
         <SafeAreaView style={GS.beskederContainer}>
             <ScrollView style={GS.beskederScrollView}>
@@ -57,14 +103,34 @@ export default function BeskederScreen({ navigation }) {
                     {/* View til modtagede beskeder */}
                     <View style={GS.beskederSection}>
                         <Text style={GS.h2}>Modtagede beskeder</Text>
-                        <Text style={GS.sectionPlaceholder}>Ulæste beskeder vil blive vist først og ældre under</Text>
+                        {received.length === 0 ? (
+                            <Text style={GS.sectionPlaceholder}>Ingen modtagede beskeder</Text>
+                        ) : (
+                            received.map(m => (
+                                <View key={m.id} style={GS.messageItem}>
+                                    <Text style={GS.messageSubject}>{m.subject}</Text>
+                                    <Text style={GS.messagePreview}>{m.text}</Text>
+                                    <Text style={GS.messageMeta}>Fra: {users[m.senderUid]?.name || m.senderUid} • {m.createdAt ? new Date(m.createdAt).toLocaleString() : ''}</Text>
+                                </View>
+                            ))
+                        )}
                     </View>
 
 
                          {/* View til sendte beskeder */}
                     <View style={GS.beskederSection}>
                         <Text style={GS.h2}>Sendte beskeder</Text>
-                        <Text style={GS.sectionPlaceholder}>Ingen sendte beskeder</Text>
+                        {sent.length === 0 ? (
+                            <Text style={GS.sectionPlaceholder}>Ingen sendte beskeder</Text>
+                        ) : (
+                            sent.map(m => (
+                                <View key={m.id} style={GS.messageItem}>
+                                    <Text style={GS.messageSubject}>{m.subject}</Text>
+                                    <Text style={GS.messagePreview}>{m.text}</Text>
+                                    <Text style={GS.messageMeta}>Til: {users[m.recipientUid]?.name || m.recipientUid} • {m.createdAt ? new Date(m.createdAt).toLocaleString() : ''}</Text>
+                                </View>
+                            ))
+                        )}
                     </View>
                 </View>
             </ScrollView>
