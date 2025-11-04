@@ -65,6 +65,29 @@ export async function getBookings(uid) {
   return snap.exists() ? snap.val() : {};
 }
 
+// --- Opslag (public posts shown on Forside) ---
+const opslagPath = () => `opslag`;
+
+export async function pushOpslag(opslag) {
+  if (!opslag) throw new Error('Missing opslag');
+  const listRef = ref(database, opslagPath());
+  const newRef = await push(listRef);
+  await set(newRef, { ...opslag, createdAt: Date.now() });
+  return newRef.key;
+}
+
+export async function getOpslag() {
+  const listRef = ref(database, opslagPath());
+  const snap = await get(listRef);
+  return snap.exists() ? snap.val() : {};
+}
+
+export function listenToOpslag(cb) {
+  const listRef = ref(database, opslagPath());
+  const unsubscribe = onValue(listRef, (snapshot) => cb(snapshot.val()));
+  return () => unsubscribe();
+}
+
 export default {
   setUserProfile,
   updateUserProfile,
@@ -74,4 +97,7 @@ export default {
   getMessages,
   pushBooking,
   getBookings,
+  pushOpslag,
+  getOpslag,
+  listenToOpslag,
 };

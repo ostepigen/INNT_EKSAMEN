@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, ScrollView } from "react-native";
+import { View, Text, ScrollView, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import GlobalStyles from "../../styles/globalstyles";
 import { onAuthStateChanged } from 'firebase/auth';
@@ -14,8 +14,9 @@ const TEST_OPSLAG = [
 ];
 
 
-export default function ForsideScreen() {
+export default function ForsideScreen({ navigation }) {
     const [displayName, setDisplayName] = useState('');
+    const [opslagList, setOpslagList] = useState([]);
 // Hent brugerens navn til velkomsthilsen
     useEffect(() => {
         const unsub = onAuthStateChanged(auth, async (user) => {
@@ -43,6 +44,21 @@ export default function ForsideScreen() {
         return () => unsub();
     }, []);
 
+    // listen for opslag in realtime
+    useEffect(() => {
+        const unsub = userService.listenToOpslag((data) => {
+            // data is an object keyed by id -> value
+            const list = data ? Object.keys(data).map((k) => ({ id: k, ...data[k] })) : [];
+            // sort so important first then by createdAt desc
+            list.sort((a, b) => {
+                if ((b.important ? 1 : 0) - (a.important ? 1 : 0) !== 0) return (b.important ? 1 : 0) - (a.important ? 1 : 0);
+                return (b.createdAt || 0) - (a.createdAt || 0);
+            });
+            setOpslagList(list);
+        });
+        return () => unsub && unsub();
+    }, []);
+
     return (
         <SafeAreaView>
             <ScrollView>
@@ -54,12 +70,17 @@ export default function ForsideScreen() {
                     </View>
 
                     <View>
-                        {/* loop gennem alle opslag fra TEST_OPSLAG */}
-                        {TEST_OPSLAG.map(opslag => (
+                        <TouchableOpacity style={[GlobalStyles.button, GlobalStyles.buttonPrimary, { marginBottom: 12 }]} onPress={() => navigation.navigate('NyOpslag')}>
+                            <Text style={GlobalStyles.buttonPrimaryText}>Lav ny opslag</Text>
+                        </TouchableOpacity>
+
+                        {/* loop gennem opslag fra databasen */}
+                        {opslagList.map(opslag => (
                             <View key={opslag.id} style={GlobalStyles.opslagContainer}>
-                                <Text style={GlobalStyles.label}>{opslag.title}</Text>
-                                <Text>{opslag.content}</Text>
-                                <Text style={GlobalStyles.normaltekst}>Oprettet af: {opslag.bruger}</Text>
+                                <Text style={GlobalStyles.label}>{opslag.title} {opslag.important ? '🔴' : ''}</Text>
+                                <Text style={GlobalStyles.normaltekst}>{opslag.createdAt ? new Date(opslag.createdAt).toLocaleString() : ''}</Text>
+                                <Text>{opslag.text}</Text>
+                                <Text style={GlobalStyles.normaltekst}>Oprettet af: {opslag.senderName}</Text>
                             </View>
                         ))}
                     </View>

@@ -18,6 +18,14 @@
         ".write": "auth != null && auth.uid === $uid"
       }
     },
+    "opslag": {
+      ".read": "auth != null",
+      ".write": "auth != null",
+      "$opslagId": {
+        ".write": "auth != null && newData.child('senderUid').val() === auth.uid",
+        ".validate": "newData.hasChildren(['title','text','senderUid','senderName','createdAt']) && newData.child('title').isString() && newData.child('title').val().length > 0 && newData.child('text').isString() && newData.child('text').val().length > 0 && newData.child('senderUid').isString() && newData.child('senderUid').val() === auth.uid && newData.child('senderName').isString() && newData.child('createdAt').isNumber() && (!newData.child('important').exists() || newData.child('important').val() === true || newData.child('important').val() === false)"
+      }
+    },
     ".read": false,
     ".write": false
   }

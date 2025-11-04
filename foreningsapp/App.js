@@ -10,6 +10,7 @@ import userService from './src/services/firebase/userService';
 import ProfilScreen from './src/screens/MinBolig/ProfilScreen';
 import AuthScreen from './src/screens/Bruger/AuthScreen';
 import TabNavigator from './src/navigation/TabNavigator';
+import NyOpslagScreen from './src/screens/Forside/NyOpslagScreen';
 
 // Opretter en Stack Navigator til at håndtere navigation mellem sider
 const Stack = createNativeStackNavigator();
@@ -55,6 +56,7 @@ export default function App() {
             // initialRouteName bestemmes ud fra needsProfile så brugeren lander korrekt.
             <Stack.Navigator screenOptions={{ headerShown: false }} initialRouteName={needsProfile ? 'CompleteProfile' : 'Tabs'}>
               <Stack.Screen name="CompleteProfile" component={ProfilScreen} />
+              <Stack.Screen name="NyOpslag" component={NyOpslagScreen} />
               <Stack.Screen name="Tabs">
                 {() => <TabNavigator enabled={!needsProfile} />}
               </Stack.Screen>
