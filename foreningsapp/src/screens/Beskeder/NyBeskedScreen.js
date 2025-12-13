@@ -1,7 +1,8 @@
 // Skærm til at oprette ny besked til bestyrelsen
 import React, { useState, useEffect } from "react";
-import { View, Text, TextInput, TouchableOpacity, Alert, KeyboardAvoidingView, Platform, ScrollView } from "react-native";
+import { View, Text, TextInput, Pressable, Alert, KeyboardAvoidingView, Platform, ScrollView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { Ionicons } from '@expo/vector-icons';
 import GS, { COLORS, SPACING } from "../../styles/globalstyles";
 import userService from '../../services/firebase/userService';
 import { auth } from '../../services/firebase/db';
@@ -82,89 +83,126 @@ export default function NyBeskedScreen({ navigation }) {
     };
 
     return (
-        <SafeAreaView style={GS.screen}>
+        <SafeAreaView edges={['left', 'right', 'bottom']} style={GS.screen}>
             <KeyboardAvoidingView 
                 style={{ flex: 1 }}
                 behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
                 keyboardVerticalOffset={Platform.OS === 'ios' ? 60 : 0}
             >
-                <ScrollView style={{ flex: 1 }} contentContainerStyle={{ paddingBottom: 50 }}>
-                    <View style={GS.content}>
-                        <Text style={GS.h1}>Ny besked</Text>
-                        <Text style={[GS.help, { marginBottom: SPACING.xl }]}>
-                            Send en besked til bestyrelsen eller en anden beboer
-                        </Text>
+                <ScrollView style={{ flex: 1 }} contentContainerStyle={GS.content} showsVerticalScrollIndicator={false}>
+                    {/* Header */}
+                    <View style={{ marginBottom: SPACING.xl }}>
+    <Ionicons name="mail-outline" size={15} color={COLORS.primary} style={{ marginRight: SPACING.md }} />
+                        <Text style={[GS.help, { color: COLORS.subtext }]}>Send en besked til en anden beboer
+                     </Text>
+                    </View>
 
+                    {/* Form card */}
+                    <View style={[GS.listCard, { overflow: 'hidden' }]}>
                         {/* Recipient dropdown */}
-                        <Text style={GS.label}>Modtager</Text>
-                        <TouchableOpacity style={GS.valueBox} onPress={() => setShowDropdown((s) => !s)}>
-                            <Text>{users.find(u => u.uid === recipientUid)?.name || users.find(u => u.uid === recipientUid)?.email || 'Vælg modtager'}</Text>
-                        </TouchableOpacity>
-                        {showDropdown && (
-                            <View style={{ borderWidth: 1, borderColor: '#ddd', borderRadius: 6, marginTop: 6, maxHeight: 180 }}>
-                                <ScrollView>
-                                    {users.map(u => (
-                                        <TouchableOpacity key={u.uid} style={{ padding: 12, borderBottomWidth: 1, borderBottomColor: '#eee' }} onPress={() => { setRecipientUid(u.uid); setShowDropdown(false); }}>
-                                            <Text>{u.name || u.email}</Text>
-                                        </TouchableOpacity>
-                                    ))}
-                                </ScrollView>
+                        <View style={{ paddingHorizontal: SPACING.lg, paddingVertical: SPACING.md }}>
+                            <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: SPACING.sm }}>
+                                <Ionicons name="person-outline" size={18} color={COLORS.primary} style={{ marginRight: SPACING.sm }} />
+                                <Text style={[GS.label, { marginBottom: 0 }]}>Modtager</Text>
                             </View>
-                        )}
+                            <Pressable 
+                                style={[GS.valueBox, { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }]} 
+                                onPress={() => setShowDropdown((s) => !s)}
+                            >
+                                <Text style={GS.valueText}>{users.find(u => u.uid === recipientUid)?.name || users.find(u => u.uid === recipientUid)?.email || 'Vælg modtager'}</Text>
+                                <Ionicons name={showDropdown ? "chevron-up" : "chevron-down"} size={20} color={COLORS.subtext} />
+                            </Pressable>
+                            {showDropdown && (
+                                <View style={{ borderWidth: 1, borderColor: COLORS.border, borderRadius: SPACING.r, marginTop: SPACING.sm, maxHeight: 240, backgroundColor: COLORS.card, overflow: 'hidden' }}>
+                                    <ScrollView showsVerticalScrollIndicator={false}>
+                                        {users.map((u, idx) => (
+                                            <View key={u.uid}>
+                                                <Pressable 
+                                                    style={[{ paddingHorizontal: SPACING.lg, paddingVertical: SPACING.md }, recipientUid === u.uid && { backgroundColor: COLORS.primary50 }]} 
+                                                    onPress={() => { setRecipientUid(u.uid); setShowDropdown(false); }}
+                                                >
+                                                    <Text style={[GS.text, recipientUid === u.uid && { color: COLORS.primary, fontWeight: '600' }]}>{u.name || u.email}</Text>
+                                                </Pressable>
+                                                {idx < users.length - 1 && <View style={GS.listRowDivider} />}
+                                            </View>
+                                        ))}
+                                    </ScrollView>
+                                </View>
+                            )}
+                        </View>
+
+                        <View style={GS.listRowDivider} />
 
                         {/* Emne felt */}
-                        <Text style={GS.label}>Emne</Text>
-                        <TextInput
-                            style={GS.valueBox}
+                        <View style={{ paddingHorizontal: SPACING.lg, paddingVertical: SPACING.md }}>
+                            <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: SPACING.sm }}>
+                                <Ionicons name="list-outline" size={18} color={COLORS.primary} style={{ marginRight: SPACING.sm }} />
+                                <Text style={[GS.label, { marginBottom: 0 }]}>Emne</Text>
+                            </View>
+                            <TextInput
+                                style={[GS.valueBox, { color: COLORS.text }]}
+                                placeholder="Hvad handler beskeden om?"
+                                placeholderTextColor={COLORS.subtext}
+                                value={emne}
+                                onChangeText={setEmne}
+                                maxLength={100}
+                            />
+                            <Text style={[GS.help, { marginTop: SPACING.sm, textAlign: 'right' }]}>
+                                {emne.length}/100
+                            </Text>
+                        </View>
 
-                            value={emne}
-                            onChangeText={setEmne}
-                            maxLength={100}
-                        />
-
-                        <View style={GS.cardSpacer} />
+                        <View style={GS.listRowDivider} />
 
                         {/* Besked felt */}
-                        <Text style={GS.label}>Besked</Text>
-                        <TextInput
-                            style={[GS.valueBox, { 
-                                height: 120, 
-                                textAlignVertical: 'top',
-                                paddingTop: SPACING.md 
-                            }]}
-                            placeholder="Skriv din besked her..."
-                            value={besked}
-                            onChangeText={setBesked}
-                            multiline={true}
-                            maxLength={500}
-                        />
-
-                        <Text style={[GS.help, { marginTop: SPACING.sm }]}>
-                            {besked.length}/500 tegn
-                        </Text>
-
-                        <View style={{ height: SPACING.xxl }} />
-
-                        {/* Send knap */}
-                        <TouchableOpacity 
-                            style={[GS.btn, loading && { backgroundColor: COLORS.subtext }]}
-                            onPress={sendBesked}
-                            disabled={loading}
-                        >
-                            <Text style={GS.btnText}>
-                                {loading ? "Sender..." : "Send besked"}
+                        <View style={{ paddingHorizontal: SPACING.lg, paddingVertical: SPACING.md }}>
+                            <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: SPACING.sm }}>
+                                <Ionicons name="document-text-outline" size={18} color={COLORS.primary} style={{ marginRight: SPACING.sm }} />
+                                <Text style={[GS.label, { marginBottom: 0 }]}>Besked</Text>
+                            </View>
+                            <TextInput
+                                style={[GS.valueBox, { 
+                                    height: 140, 
+                                    textAlignVertical: 'top',
+                                    paddingTop: SPACING.md,
+                                    color: COLORS.text
+                                }]}
+                                placeholder="Skriv din besked her..."
+                                placeholderTextColor={COLORS.subtext}
+                                value={besked}
+                                onChangeText={setBesked}
+                                multiline={true}
+                                maxLength={500}
+                            />
+                            <Text style={[GS.help, { marginTop: SPACING.sm, textAlign: 'right' }]}>
+                                {besked.length}/500 tegn
                             </Text>
-                        </TouchableOpacity>
-
-                        {/* Annuller knap */}
-                        <TouchableOpacity 
-                            style={[GS.btnGhost, { marginTop: SPACING.lg }]}
-                            onPress={() => navigation.goBack()}
-                            disabled={loading}
-                        >
-                            <Text style={GS.btnGhostText}>Annuller</Text>
-                        </TouchableOpacity>
+                        </View>
                     </View>
+
+                    <View style={{ height: SPACING.xl }} />
+
+                    {/* Send knap */}
+                    <Pressable 
+                        style={[GS.btn, loading && { backgroundColor: COLORS.subtext }, { flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }]}
+                        onPress={sendBesked}
+                        disabled={loading}
+                    >
+                        {!loading && <Ionicons name="send" size={18} color="white" style={{ marginRight: SPACING.sm }} />}
+                        <Text style={GS.btnText}>
+                            {loading ? "Sender..." : "Send besked"}
+                        </Text>
+                    </Pressable>
+
+                    {/* Annuller knap */}
+                    <Pressable 
+                        style={[GS.btnGhost, { marginTop: SPACING.lg, flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }]}
+                        onPress={() => navigation.goBack()}
+                        disabled={loading}
+                    >
+                        <Ionicons name="close" size={18} color={COLORS.primary} style={{ marginRight: SPACING.sm }} />
+                        <Text style={GS.btnGhostText}>Annuller</Text>
+                    </Pressable>
                 </ScrollView>
             </KeyboardAvoidingView>
         </SafeAreaView>

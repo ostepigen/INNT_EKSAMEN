@@ -2,8 +2,8 @@
 import { StyleSheet } from 'react-native';
 
 export const COLORS = {
-  bg:        '#f2f2f2',
-  card:      '#c7c1bbff',
+  bg:        '#f5f5f5ff',
+  card:      '#ffffffff',
   border:    '#E6E8EC',
   text:      '#111827',
   subtext:   '#6B7280',
@@ -74,6 +74,16 @@ const GS = StyleSheet.create({
     justifyContent: 'center',
   },
   btnText: { color: '#fff', fontWeight: '700', fontSize: 16 },
+  btnSmall: {
+    backgroundColor: COLORS.primary,
+    borderRadius: SPACING.r,
+    paddingVertical: SPACING.sm,
+    paddingHorizontal: SPACING.lg,
+    alignItems: 'center',
+    justifyContent: 'center',
+    alignSelf: 'flex-start',
+  },
+  btnSmallText: { color: '#fff', fontWeight: '700', fontSize: 14 },
   btnGhost: {
     backgroundColor: COLORS.primary50,
     borderRadius: SPACING.r,
@@ -298,7 +308,7 @@ const GS = StyleSheet.create({
     flex: 1,
   },
   beskederContent: {
-    padding: 16,
+    padding: SPACING.xl,
   },
   beskederHeader: {
     flexDirection: 'row',
@@ -327,8 +337,8 @@ const GS = StyleSheet.create({
   aiChatButton: {
     backgroundColor: COLORS.card,
     borderRadius: 12,
-    padding: 16,
-    marginBottom: 24,
+    padding: SPACING.lg,
+    marginBottom: SPACING.xl,
     borderWidth: 1,
     borderColor: '#e9ecef',
   },
@@ -367,7 +377,7 @@ const GS = StyleSheet.create({
     color: COLORS.textSecondary,
   },
   beskederSection: {
-    marginBottom: 24,
+    marginBottom: SPACING.xl,
   },
   sectionTitle: {
     fontSize: 16,
@@ -399,7 +409,7 @@ const GS = StyleSheet.create({
     color: COLORS.primary,
     fontStyle: 'italic',
     textAlign: 'center',
-    marginTop: 50,
+    marginTop: SPACING.xl,
   },
   loadingText: {
     color: COLORS.primary,
@@ -420,6 +430,50 @@ const GS = StyleSheet.create({
     height: 20,
     borderRadius: 10,
     marginRight: 6,
+  },
+
+  // Message list items (Beskeder)
+  messageItem: {
+    backgroundColor: COLORS.card,
+    borderRadius: SPACING.r,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    padding: SPACING.lg,
+    marginBottom: SPACING.md,
+  },
+  messageSubject: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: COLORS.text,
+    marginBottom: SPACING.xs,
+  },
+  messagePreview: {
+    fontSize: 14,
+    color: COLORS.textSecondary,
+    marginBottom: SPACING.xs,
+  },
+  messageMeta: {
+    fontSize: 12,
+    color: COLORS.subtext,
+  },
+
+  // Reusable list card styles
+  listCard: {
+    backgroundColor: COLORS.card,
+    borderRadius: SPACING.r,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    overflow: 'hidden',
+  },
+  listRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: SPACING.xl,
+    paddingVertical: SPACING.lg,
+  },
+  listRowDivider: {
+    borderTopWidth: 1,
+    borderTopColor: COLORS.border,
   },
 });
 

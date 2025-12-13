@@ -1,77 +1,161 @@
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { View, Text, ScrollView, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 
-import GS from "../../styles/globalstyles";
-
-
+import GS, { COLORS, SPACING } from "../../styles/globalstyles";
+import MFS from "../../styles/minForeningStyles";
 
 export default function MinForeningScreen() {
+    const [expandedIndex, setExpandedIndex] = useState(null);
+
+    const bestyrelse = [
+        {
+            id: 1,
+            title: "Bestyrelsen",
+            subtitle: "Foreningens bestyrelse",
+            members: [
+                { rolle: "Formand", navn: "Lars Nielsen", telefon: "20 20 20 56", email: "lars@forening.dk" },
+                { rolle: "Næstformand", navn: "Anne Hansen", telefon: "30 20 67 89", email: "anne@forening.dk" },
+                { rolle: "Kasserer", navn: "Peter Andersen", telefon: "40 20 90 12", email: "peter@forening.dk" },
+                { rolle: "Sekretær", navn: "Maria Jensen", telefon: "50 11 20 20", email: "maria@forening.dk" }
+            ]
+        }
+    ];
+
+    const driftskontakter = [
+        {
+            id: 2,
+            title: "VVS & CO",
+            subtitle: "VVS firma",
+            email: "kontor@vvs.dk",
+            telefon: "59 59 59 59",
+            icon: "water"
+        },
+        {
+            id: 3,
+            title: "Københavns El-Service",
+            subtitle: "Elektriker",
+            email: "el@kbh.dk",
+            telefon: "44 44 44 44",
+            icon: "flash"
+        }
+    ];
+
+    const toggleExpand = (index) => {
+        setExpandedIndex(expandedIndex === index ? null : index);
+    };
+
     return (
-        <SafeAreaView style={GS.container} >
-
-            <ScrollView>
-
-                <View style={GS.card}>
-
-                    {/* Foreningens kontakter */}
-                    <View style={{ backgroundColor: '#f8f9fa', padding: 15, borderRadius: 10 }}>
-                        {/* Overskrift */}
-                        <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 20 }}>
-                            <Ionicons name="people-outline" style={GS.icon} />
-                            <Text style={GS.h2}>Kontakter</Text>
-                        </View>
-
-                        {/* Bestyrelse */}
-                        <View style={{ marginBottom: 20 }}>
-                            <Text style={GS.label}>Bestyrelse</Text>
-                            <View style={{ paddingLeft: 15 }}>
-                                <Text style={GS.bodyText}>• Formand: Lars Nielsen</Text>
-                                <Text style={[GS.bodyText, { color: '#666' }]}>  📞 20 12 34 56 | ✉️ formand@forening.dk</Text>
-                                <Text style={GS.bodyText}>• Næstformand: Anne Hansen</Text>
-                                <Text style={[GS.bodyText, { color: '#666' }]}>  📞 30 45 67 89 | ✉️ naestformand@forening.dk</Text>
-                                <Text style={GS.bodyText}>• Kasserer: Peter Andersen</Text>
-                                <Text style={[GS.bodyText, { color: '#666' }]}>  📞 40 78 90 12 | ✉️ kasserer@forening.dk</Text>
-                            </View>
-                        </View>
-
-                        {/* Administration */}
-                        <View style={{ marginBottom: 20 }}>
-                            <Text style={GS.label}>Administration</Text>
-                            <View style={{ paddingLeft: 15 }}>
-                                <Text style={GS.bodyText}>• Ejendomsadministrator: Boligselskab Nord</Text>
-                                <Text style={[GS.bodyText, { color: '#666' }]}>  📞 70 10 20 30 | ✉️ admin@boligselskabnord.dk</Text>
-                                <Text style={GS.bodyText}>• Vicevært: Jens Christensen</Text>
-                                <Text style={[GS.bodyText, { color: '#666' }]}>  📞 25 67 89 01 | ✉️ vicevært@forening.dk</Text>
-                            </View>
-                        </View>
-
-                        {/* Håndværkere */}
-                        <View style={{ marginBottom: 10 }}>
-                            <Text style={GS.label}>Håndværkere</Text>
-                            <View style={{ paddingLeft: 15 }}>
-                                <Text style={GS.bodyText}>• VVS: Hansen & Søn VVS</Text>
-                                <Text style={[GS.bodyText, { color: '#666' }]}>  📞 86 12 34 56 | ✉️ kontakt@hansenvvs.dk</Text>
-                                <Text style={GS.bodyText}>• El-installatør: Nordel A/S</Text>
-                                <Text style={[GS.bodyText, { color: '#666' }]}>  📞 75 43 21 09 | ✉️ service@nordel.dk</Text>
-                                <Text style={GS.bodyText}>• Låsesmed: Sikkerhed & Låse</Text>
-                                <Text style={[GS.bodyText, { color: '#666' }]}>  📞 24/7: 80 90 12 34</Text>
-                            </View>
-                        </View>
-                    </View>
+        <SafeAreaView style={GS.screen} edges={['left', 'right', 'bottom']}>
+            <ScrollView contentContainerStyle={MFS.container} contentInsetAdjustmentBehavior="never">
+                
+                {/* Bestyrelse sektion */}
+                <View style={MFS.sectionHeader}>
+                    <Text style={GS.h1}>Bestyrelsen</Text>
                 </View>
 
+                {bestyrelse.map((section, index) => (
+                    <TouchableOpacity
+                        key={section.id}
+                        style={MFS.card}
+                        onPress={() => setExpandedIndex(expandedIndex === index ? null : index)}
+                        activeOpacity={0.7}
+                    >
+                        <View style={MFS.cardHeader}>
+                            <View style={{ flex: 1 }}>
+                                <Text style={MFS.cardTitle}>
+                                    {section.title}
+                                </Text>
+                                <Text style={MFS.cardSubtitle}>
+                                    {section.subtitle}
+                                </Text>
+                            </View>
+                            <Ionicons
+                                name={expandedIndex === index ? "chevron-up" : "chevron-down"}
+                                style={MFS.expandChevron}
+                            />
+                        </View>
 
+                        {expandedIndex === index && (
+                            <View style={MFS.cardContent}>
+                                {section.members.map((medlem, memberIndex) => (
+                                    <View key={memberIndex} style={MFS.memberBlock}>
+                                        <Text style={[GS.label, { color: COLORS.primary, marginBottom: SPACING.xs }]}>
+                                            {medlem.rolle}
+                                        </Text>
+                                        <Text style={[GS.help, { color: COLORS.text, fontWeight: '500', marginBottom: SPACING.xs }]}>
+                                            {medlem.navn}
+                                        </Text>
+                                        <Text style={[GS.help, { color: COLORS.subtext, marginBottom: SPACING.xs }]}>
+                                            📞 {medlem.telefon}
+                                        </Text>
+                                        <Text style={[GS.help, { color: COLORS.primary }]}>
+                                            {medlem.email}
+                                        </Text>
+                                    </View>
+                                ))}
+                            </View>
+                        )}
+                    </TouchableOpacity>
+                ))}
 
+                {/* Driftskontakter sektion */}
+                <View style={MFS.sectionHeader}>
+                    <Text style={GS.h1}>Driftskontakter</Text>
+                </View>
 
-                <TouchableOpacity style={GS.touchableOpacity}>
-                    <Ionicons name="document-text-outline" style={GS.icon} />
-                    <Text style={GS.h2}>FAQ: hjælp og spørgsmål</Text>
-                </TouchableOpacity>
+                {driftskontakter.map((kontakt, index) => (
+                    <TouchableOpacity
+                        key={kontakt.id}
+                        style={[MFS.card, { marginBottom: SPACING.lg }]}
+                        onPress={() => toggleExpand(index)}
+                        activeOpacity={0.7}
+                    >
+                        {/* Header - Altid synlig */}
+                        <View style={MFS.cardHeader}>
+                            <View style={{ flex: 1 }}>
+                                <Text style={MFS.cardTitle}>
+                                    {kontakt.title}
+                                </Text>
+                                <Text style={MFS.cardSubtitle}>
+                                    {kontakt.subtitle}
+                                </Text>
+                            </View>
+                            <Ionicons
+                                name={expandedIndex === index ? "chevron-up" : "chevron-down"}
+                                style={MFS.expandChevron}
+                            />
+                        </View>
+
+                        {/* Expandable content */}
+                        {expandedIndex === index && (
+                            <View style={MFS.cardContent}>
+                                {/* Email */}
+                                <View style={{ marginBottom: SPACING.lg }}>
+                                    <Text style={MFS.contactLabel}>
+                                        E-mail
+                                    </Text>
+                                    <Text style={MFS.contactValue}>
+                                        {kontakt.email}
+                                    </Text>
+                                </View>
+
+                                {/* Telefon */}
+                                <View>
+                                    <Text style={MFS.contactLabel}>
+                                        Arbejdstelefon
+                                    </Text>
+                                    <Text style={MFS.contactValue}>
+                                        {kontakt.telefon}
+                                    </Text>
+                                </View>
+                            </View>
+                        )}
+                    </TouchableOpacity>
+                ))}
             </ScrollView>
-
         </SafeAreaView>
-    )
+    );
 }

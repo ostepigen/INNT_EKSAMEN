@@ -5,7 +5,7 @@ import React, { useEffect, useState, useRef } from "react";
 import { View, Text, ScrollView, TouchableOpacity, KeyboardAvoidingView, Platform, Image } from "react-native";
 import { TextInput } from "react-native-gesture-handler";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { HUSREGLER_DOKUMENT } from "../../data/husregler";
+import { API_KEY } from '../../config/apiConfig';
 import GS from "../../styles/globalstyles";
 import SendMessage from "../../services/request";
 
@@ -20,9 +20,8 @@ export default function TestChatScreen() {
     const [loading, setLoading] = useState(false);
     const [chatHistorik, setChatHistorik] = useState([]); // array til at gemme alle beskeder i historikken
 
-    //Henter husregler fra separat fil
-    //TODO: Dette skal senere hentes fra database
-    const foreningsKnowledge = HUSREGLER_DOKUMENT;
+    // Offentlig PDF med husregler (Cloudinary)
+    const HUSREGLER_PDF_URL = "https://res.cloudinary.com/dsjoirhgw/image/upload/v1765659338/Husregler_for_Fantasiga%CC%8Arden_mujfnd.pdf";
 
     //Send knap funktion til AI chatten
     const sendKnapAI = async () => {
@@ -50,12 +49,13 @@ export default function TestChatScreen() {
             const messageArray = [
                 {
                     role: "system", // system besked der sætter konteksten for AI'en
-                    content: `Du er et AI-bestyrelsesmedlem i en andelsboligforening. 
-                            Du skal hjælpe beboerne med spørgsmål om foreningens regler på dansk.
-                            Du har adgang til foreningens husregler: ${foreningsKnowledge}
-                            
-                            VIGTIG: Du er en TEST version, så nævn altid at du er i test-modus i dine svar.
-                            Vær hjælpsom men gør det klart at dette er eksperimentelt.`
+                    content: `Du er et AI-bestyrelsesmedlem i en andelsboligforening.
+                        Du skal hjælpe beboerne med spørgsmål om foreningens regler på dansk.
+                        Du kan henvise til foreningens husregler via denne PDF: ${HUSREGLER_PDF_URL}
+                        Hvis et spørgsmål kræver detaljer fra husreglerne, så gør opmærksom på linket og svar kun på det, der er sikkert. Find ikke på regler, hvis du er i tvivl.
+
+                        VIGTIG: Du er en TEST version, så nævn altid at du er i test-modus i dine svar.
+                        Vær hjælpsom men gør det klart at dette er eksperimentelt.`
                 },
                 {
                     role: "user", // brugerens besked
@@ -92,7 +92,7 @@ export default function TestChatScreen() {
             const fejlBesked = {
                 id: Date.now() + 1,
                 type: 'error',
-                message: "AI - Netværksfejl. Tjek din internetforbindelse.",
+                message: "AI - Netværksfejl. Kontakt app udbyder.",
                 timestamp: new Date()
             };
             setChatHistorik(prev => [...prev, fejlBesked]);

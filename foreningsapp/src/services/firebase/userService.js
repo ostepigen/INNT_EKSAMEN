@@ -98,20 +98,35 @@ export function listenToSentMessages(uid, cb) {
   return () => unsubscribe();
 }
 
-// --- Bookings (vasketider) ---
-export async function pushBooking(uid, booking) {
-  if (!uid) throw new Error('Missing uid');
-  const listRef = ref(database, bookingsPath(uid));
+// --- Bookings (global, visible to all users) ---
+const bookingsGlobalPath = (resourceId) => `bookings/${resourceId}`;
+
+export async function pushBooking(resourceId, booking) {
+  if (!resourceId) throw new Error('Missing resourceId');
+  const listRef = ref(database, bookingsGlobalPath(resourceId));
   const newRef = await push(listRef);
   await set(newRef, { ...booking, createdAt: Date.now() });
   return newRef.key;
 }
 
-export async function getBookings(uid) {
-  if (!uid) return {};
-  const listRef = ref(database, bookingsPath(uid));
+export async function getBookings(resourceId) {
+  if (!resourceId) return {};
+  const listRef = ref(database, bookingsGlobalPath(resourceId));
   const snap = await get(listRef);
   return snap.exists() ? snap.val() : {};
+}
+
+export function listenToBookings(resourceId, cb) {
+  if (!resourceId) return () => {};
+  const listRef = ref(database, bookingsGlobalPath(resourceId));
+  const unsubscribe = onValue(listRef, (snapshot) => cb(snapshot.val()));
+  return () => unsubscribe();
+}
+
+export async function deleteBooking(resourceId, bookingId) {
+  if (!resourceId || !bookingId) throw new Error('Missing resourceId or bookingId');
+  const bookingRef = ref(database, `${bookingsGlobalPath(resourceId)}/${bookingId}`);
+  await set(bookingRef, null);
 }
 
 // --- Opslag (public posts shown on Forside) ---
@@ -149,6 +164,8 @@ export default {
   listenToSentMessages,
   pushBooking,
   getBookings,
+  listenToBookings,
+  deleteBooking,
   getAllUsers,
   listenToUsers,
   pushOpslag,

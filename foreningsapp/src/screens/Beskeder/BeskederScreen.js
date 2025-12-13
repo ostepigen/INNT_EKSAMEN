@@ -59,8 +59,8 @@ export default function BeskederScreen({ navigation }) {
     }, []);
 
     return (
-        <SafeAreaView style={GS.beskederContainer}>
-            <ScrollView style={GS.beskederScrollView}>
+        <SafeAreaView style={GS.beskederContainer} edges={['left', 'right', 'bottom']}>
+            <ScrollView style={GS.beskederScrollView} contentInsetAdjustmentBehavior="never">
                 <View style={GS.beskederContent}>
                     <View style={GS.beskederHeader}>
                         <Text style={GS.beskederTitle}>Beskeder</Text>
@@ -95,7 +95,7 @@ export default function BeskederScreen({ navigation }) {
                                 <Text style={GS.aiTitle}>AI Bestyrelsesmedlem</Text>
                                 <Text style={GS.aiSubtitle}>Jeg kan hjælpe dig med hurtige svar</Text>
                             </View>
-                            <Ionicons name="chevron-forward" size={24} color="#255d32ff" />
+                            <Ionicons name="chevron-forward" size={24} color={GS.icon.color} />
                         </View>
                     </TouchableOpacity>
 

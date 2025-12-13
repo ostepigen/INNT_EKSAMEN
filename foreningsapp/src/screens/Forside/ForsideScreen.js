@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, ScrollView, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import GlobalStyles from "../../styles/globalstyles";
+import GS, { SPACING } from "../../styles/globalstyles";
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from '../../services/firebase/db';
 import userService from '../../services/firebase/userService';
@@ -60,32 +60,38 @@ export default function ForsideScreen({ navigation }) {
     }, []);
 
     return (
-        <SafeAreaView>
-            <ScrollView>
-
-                <View>
+        <SafeAreaView style={GS.screen} edges={['left', 'right', 'bottom']}>
+            <ScrollView contentInsetAdjustmentBehavior="never">
+                <View style={GS.content}>
                     {/* Velkomsthilsen */}
-                    <View>
-                        <Text style={GlobalStyles.h2}>Hej {displayName ? displayName : 'bruger'}</Text>
+                    <View style={{ marginBottom: SPACING.lg }}>
+                        <Text style={GS.h1}>Hej {displayName ? displayName : 'bruger'}</Text>
+                        <Text style={GS.help}>Velkommen tilbage</Text>
                     </View>
 
-                    <View>
-                        <TouchableOpacity style={[GlobalStyles.button, GlobalStyles.buttonPrimary, { marginBottom: 12 }]} onPress={() => navigation.navigate('NyOpslag')}>
-                            <Text style={GlobalStyles.buttonPrimaryText}>Lav ny opslag</Text>
-                        </TouchableOpacity>
+                    {/* Ny opslag knap */}
+                    <TouchableOpacity style={[GS.btnSmall, { marginBottom: SPACING.xl }]} onPress={() => navigation.navigate('NyOpslag')}>
+                        <Text style={GS.btnSmallText}>Lav nyt opslag</Text>
+                    </TouchableOpacity>
 
-                        {/* loop gennem opslag fra databasen */}
-                        {opslagList.map(opslag => (
-                            <View key={opslag.id} style={GlobalStyles.opslagContainer}>
-                                <Text style={GlobalStyles.label}>{opslag.title} {opslag.important ? '🔴' : ''}</Text>
-                                <Text style={GlobalStyles.normaltekst}>{opslag.createdAt ? new Date(opslag.createdAt).toLocaleString() : ''}</Text>
-                                <Text>{opslag.text}</Text>
-                                <Text style={GlobalStyles.normaltekst}>Oprettet af: {opslag.senderName}</Text>
-                            </View>
-                        ))}
+                    {/* Opslagstavle */}
+                    <View style={{ marginBottom: SPACING.md }}>
+                        <Text style={GS.h2}>Opslagstavle</Text>
                     </View>
+
+                    {opslagList.map(opslag => (
+                        <View key={opslag.id} style={GS.opslagContainer}>
+                            <Text style={GS.label}>
+                                {opslag.title} {opslag.important ? '🔴' : ''}
+                            </Text>
+                            <Text style={GS.help}>
+                                {opslag.createdAt ? new Date(opslag.createdAt).toLocaleString() : ''}
+                            </Text>
+                            <Text style={{ marginTop: SPACING.sm, color: '#222' }}>{opslag.text}</Text>
+                            <Text style={[GS.help, { marginTop: SPACING.sm }]}>Oprettet af: {opslag.senderName}</Text>
+                        </View>
+                    ))}
                 </View>
-
             </ScrollView>
         </SafeAreaView>
     )

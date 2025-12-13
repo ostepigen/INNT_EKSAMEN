@@ -6,6 +6,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import MinBoligHome from "../screens/MinBolig/MinBoligHome";
 import BoligInfoScreen from "../screens/MinBolig/BoligInfoScreen";
 import DocumentsScreen from "../screens/MinBolig/DocumentsScreen";
+import FolderDetailScreen from "../screens/MinBolig/FolderDetailScreen";
 import ProfilScreen from "../screens/MinBolig/ProfilScreen";
 import Økonomi from "../screens/MinBolig/Økonomi"
 
@@ -22,6 +23,7 @@ export default function MinBoligStack() {
             />
             <Stack.Screen name="Boligoplysninger" component={BoligInfoScreen} />
             <Stack.Screen name="Dokumenter" component={DocumentsScreen} />
+            <Stack.Screen name="FolderDetail" component={FolderDetailScreen} options={{ headerTitle: 'Dokumenter' }} />
             <Stack.Screen name="Profil" component={ProfilScreen} />
             <Stack.Screen name="Økonomi" component={Økonomi} />
         </Stack.Navigator>

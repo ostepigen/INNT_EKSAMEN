@@ -1,57 +1,98 @@
 import React, { useEffect, useState } from 'react'; 
-import { View, Text, FlatList, Pressable, Alert } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import GS, { SPACING, COLORS, SHADOW } from '../../styles/globalstyles';
+import { View, Text, ScrollView, Pressable, Alert } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { auth } from '../../services/firebase/db';
+import userService from '../../services/firebase/userService';
+import GS, { SPACING, COLORS } from '../../styles/globalstyles';
 
-const STORAGE_KEY = 'BOOKINGS_V1'; // Nøgle til at gemme/hente bookinger lokalt
-
-/* Vi har valgt at gøre brug asyncStorga bare i denne omgang for at vise, hvordan det gemmes. 
-Vi kommer til at ændre det så det gemmes i en database*/ 
+const RESOURCES = [
+  { id: 'laundry', label: 'Vaskekælder' },
+  { id: 'room', label: 'Fælleslokale' },
+];
 
 export default function MyBookingsScreen() {
-  const [data, setData] = useState([]); // Gemmer listen af bookinger
+  const [myBookings, setMyBookings] = useState([]);
+  const [allBookings, setAllBookings] = useState({});
 
-  async function load() {
-    const raw = await AsyncStorage.getItem(STORAGE_KEY);
-    setData(raw ? JSON.parse(raw) : []); // Læs og konverter gemte bookinger
-  }
-  useEffect(() => { load(); }, []); // Hent data ved første visning
+  useEffect(() => {
+    const user = auth.currentUser;
+    if (!user) return;
 
-  async function clearAll() {
-    Alert.alert('Slet alle', 'Vil du slette alle bookinger?', [
+    const unsubscribers = RESOURCES.map(resource => {
+      return userService.listenToBookings(resource.id, (data) => {
+        setAllBookings(prev => ({ ...prev, [resource.id]: data || {} }));
+      });
+    });
+
+    return () => unsubscribers.forEach(u => u());
+  }, []);
+
+  useEffect(() => {
+    const user = auth.currentUser;
+    if (!user) return;
+
+    const mine = [];
+    RESOURCES.forEach(resource => {
+      const resourceBookings = allBookings[resource.id] || {};
+      Object.keys(resourceBookings).forEach(key => {
+        const booking = resourceBookings[key];
+        if (booking.userId === user.uid) {
+          mine.push({ id: key, resourceId: resource.id, resourceLabel: resource.label, ...booking });
+        }
+      });
+    });
+    mine.sort((a, b) => {
+      const [dayA, monthA, yearA] = a.date.split('.').map(Number);
+      const [dayB, monthB, yearB] = b.date.split('.').map(Number);
+      const dateA = new Date(yearA, monthA - 1, dayA, a.startHour || a.hour || 0);
+      const dateB = new Date(yearB, monthB - 1, dayB, b.startHour || b.hour || 0);
+      return dateB - dateA;
+    });
+    setMyBookings(mine);
+  }, [allBookings]);
+
+  async function deleteBooking(booking) {
+    Alert.alert('Slet booking', 'Er du sikker?', [
       { text: 'Annullér', style: 'cancel' },
       { text: 'Slet', style: 'destructive', onPress: async () => {
-          await AsyncStorage.removeItem(STORAGE_KEY); // Fjern alt fra lageret
-          load(); // Opdater visningen
-        } },
+        try {
+          await userService.deleteBooking(booking.resourceId, booking.id);
+          Alert.alert('Slettet', 'Booking er fjernet');
+        } catch (e) {
+          Alert.alert('Fejl', e?.message || 'Kunne ikke slette booking');
+        }
+      }},
     ]);
   }
 
-  const renderItem = ({ item }) => (
-    <View style={[GS.card, SHADOW.card, { marginBottom: SPACING.lg, borderColor: COLORS.border }]}>
-      <Text style={[GS.h2, { marginBottom: SPACING.sm }]}>{item?.resource?.label}</Text>
-      <Text style={GS.help}>Dato: {item.date}</Text>
-      <Text style={GS.help}>Tid: {item.time}</Text>
-    </View>
-  );
-
   return (
-    <View style={GS.screen}>
-      <View style={[GS.content, { paddingTop: SPACING.lg }]}>
-        <Text style={[GS.h1, { marginBottom: SPACING.lg }]}>Mine bookinger</Text>
+    <SafeAreaView style={GS.screen} edges={['left', 'right', 'bottom']}>
+      <ScrollView contentInsetAdjustmentBehavior="never">
+        <View style={GS.content}>
+          <Text style={[GS.h1, { marginBottom: SPACING.lg }]}>Mine bookinger</Text>
 
-        <FlatList
-          data={data}
-          keyExtractor={(it) => it.id}
-          renderItem={renderItem}
-          ListEmptyComponent={<Text style={GS.help}>Ingen bookinger endnu.</Text>} // Vises hvis listen er tom
-          contentContainerStyle={{ paddingBottom: SPACING.xxl }}
-        />
-
-        <Pressable onPress={clearAll} style={[GS.btnGhost, { marginTop: SPACING.xl }]}>
-          <Text style={GS.btnGhostText}>Ryd alle bookinger</Text>
-        </Pressable>
-      </View>
-    </View>
+          {myBookings.length === 0 ? (
+            <View style={[GS.card, { padding: SPACING.xl, alignItems: 'center' }]}>
+              <Text style={GS.help}>Ingen bookinger endnu.</Text>
+            </View>
+          ) : (
+            myBookings.map((booking) => (
+              <View key={booking.id} style={[GS.card, { marginBottom: SPACING.lg }]}>
+                <Text style={[GS.h2, { marginBottom: SPACING.xs }]}>{booking.resourceLabel}</Text>
+                <Text style={GS.help}>Dato: {booking.date}</Text>
+                <Text style={GS.help}>
+                  Tid: {booking.startHour !== undefined 
+                    ? `${String(booking.startHour).padStart(2, '0')}:00 - ${String(booking.endHour).padStart(2, '0')}:00`
+                    : `${booking.hour}:00`}
+                </Text>
+                <Pressable onPress={() => deleteBooking(booking)} style={{ marginTop: SPACING.md }}>
+                  <Text style={{ color: COLORS.danger, fontSize: 14, fontWeight: '600' }}>Slet booking</Text>
+                </Pressable>
+              </View>
+            ))
+          )}
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 }
