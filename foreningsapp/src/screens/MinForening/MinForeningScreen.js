@@ -8,7 +8,7 @@ import GS, { COLORS, SPACING } from "../../styles/globalstyles";
 import MFS from "../../styles/minForeningStyles";
 
 export default function MinForeningScreen() {
-    const [expandedIndex, setExpandedIndex] = useState(null);
+    const [expandedId, setExpandedId] = useState(null);
 
     const bestyrelse = [
         {
@@ -43,8 +43,8 @@ export default function MinForeningScreen() {
         }
     ];
 
-    const toggleExpand = (index) => {
-        setExpandedIndex(expandedIndex === index ? null : index);
+    const toggleExpand = (id) => {
+        setExpandedId(expandedId === id ? null : id);
     };
 
     return (
@@ -60,7 +60,7 @@ export default function MinForeningScreen() {
                     <TouchableOpacity
                         key={section.id}
                         style={MFS.card}
-                        onPress={() => setExpandedIndex(expandedIndex === index ? null : index)}
+                        onPress={() => setExpandedId(expandedId === section.id ? null : section.id)}
                         activeOpacity={0.7}
                     >
                         <View style={MFS.cardHeader}>
@@ -73,12 +73,12 @@ export default function MinForeningScreen() {
                                 </Text>
                             </View>
                             <Ionicons
-                                name={expandedIndex === index ? "chevron-up" : "chevron-down"}
+                                name={expandedId === section.id ? "chevron-up" : "chevron-down"}
                                 style={MFS.expandChevron}
                             />
                         </View>
 
-                        {expandedIndex === index && (
+                        {expandedId === section.id && (
                             <View style={MFS.cardContent}>
                                 {section.members.map((medlem, memberIndex) => (
                                     <View key={memberIndex} style={MFS.memberBlock}>
@@ -110,7 +110,7 @@ export default function MinForeningScreen() {
                     <TouchableOpacity
                         key={kontakt.id}
                         style={[MFS.card, { marginBottom: SPACING.lg }]}
-                        onPress={() => toggleExpand(index)}
+                        onPress={() => toggleExpand(kontakt.id)}
                         activeOpacity={0.7}
                     >
                         {/* Header - Altid synlig */}
@@ -124,13 +124,13 @@ export default function MinForeningScreen() {
                                 </Text>
                             </View>
                             <Ionicons
-                                name={expandedIndex === index ? "chevron-up" : "chevron-down"}
+                                name={expandedId === kontakt.id ? "chevron-up" : "chevron-down"}
                                 style={MFS.expandChevron}
                             />
                         </View>
 
                         {/* Expandable content */}
-                        {expandedIndex === index && (
+                        {expandedId === kontakt.id && (
                             <View style={MFS.cardContent}>
                                 {/* Email */}
                                 <View style={{ marginBottom: SPACING.lg }}>

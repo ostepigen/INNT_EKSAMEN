@@ -94,7 +94,7 @@ export default function BookingDetailScreen() {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
-    // Empty cells for days before month starts
+    
     for (let i = 0; i < firstDay; i++) {
       days.push(<View key={`empty-${i}`} style={{ width: '14.28%' }} />);
     }
