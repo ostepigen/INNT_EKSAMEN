@@ -1,3 +1,4 @@
+//denne fil er til skærmen hvor brugeren kan lave et nyt opslag
 import React, { useEffect, useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Alert, Switch, ActivityIndicator, Image, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -17,55 +18,56 @@ export default function NyOpslagScreen({ navigation }) {
     const [loading, setLoading] = useState(false);
     const [imageUri, setImageUri] = useState(null);
 
+    // Funktion til at vælge billede fra galleri
     const pickImage = async () => {
         const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
         if (status !== 'granted') {
             Alert.alert('Tilladelse nødvendig', 'Vi har brug for adgang til dine billeder');
             return;
         }
-
+        // Åbn billedvælgeren
         const result = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ImagePicker.MediaTypeOptions.Images,
             allowsEditing: true,
             aspect: [4, 3],
             quality: 0.8,
         });
-
+        // Hvis brugeren valgte et billede, opdater imageUri state
         if (!result.canceled) {
             setImageUri(result.assets[0].uri);
         }
     };
-
+// Funktion til at tage et nyt billede med kameraet
     const takePhoto = async () => {
         const { status } = await ImagePicker.requestCameraPermissionsAsync();
         if (status !== 'granted') {
             Alert.alert('Tilladelse nødvendig', 'Vi har brug for adgang til dit kamera');
             return;
         }
-
+        // Åbn kameraet
         const result = await ImagePicker.launchCameraAsync({
             allowsEditing: true,
             aspect: [4, 3],
             quality: 0.8,
         });
-
+        // Hvis brugeren tog et billede, opdater imageUri state
         if (!result.canceled) {
             setImageUri(result.assets[0].uri);
         }
     };
 
-
+    // Hent den aktuelle bruger
     useEffect(() => {
         const unsub = onAuthStateChanged(auth, (u) => {
             setUser(u);
         });
         return () => unsub();
     }, []);
-
+// Funktion til at gemme det nye opslag
     const onSave = async () => {
         if (!user) return Alert.alert('Fejl', 'Du skal være logget ind for at lave opslag.');
         if (!title || !text) return Alert.alert('Udfyld', 'Overskrift og tekst er påkrævet.');
-        
+        // Opretter opslag objekt og gemmer det via userService
         setLoading(true);
         try {
             let imageUrl = null;

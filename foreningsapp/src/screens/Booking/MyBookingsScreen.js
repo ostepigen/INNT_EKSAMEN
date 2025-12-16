@@ -1,3 +1,4 @@
+//denne fil er til skærmen der viser brugerens egne bookinger
 import React, { useEffect, useState } from 'react'; 
 import { View, Text, ScrollView, Pressable, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -5,15 +6,18 @@ import { auth } from '../../services/firebase/db';
 import userService from '../../services/firebase/userService';
 import GS, { SPACING, COLORS } from '../../styles/globalstyles';
 
+//Definere de faciliteter der kan bookes (skal matche BookingScreen.js)
 const RESOURCES = [
   { id: 'laundry', label: 'Vaskekælder' },
   { id: 'room', label: 'Fælleslokale' },
 ];
 
 export default function MyBookingsScreen() {
+  //State til at holde brugerens bookinger og alle bookinger
   const [myBookings, setMyBookings] = useState([]);
   const [allBookings, setAllBookings] = useState({});
 
+  //Hent alle bookinger for hver ressource i realtid
   useEffect(() => {
     const user = auth.currentUser;
     if (!user) return;
@@ -27,6 +31,7 @@ export default function MyBookingsScreen() {
     return () => unsubscribers.forEach(u => u());
   }, []);
 
+  //Filtrer og sorter brugerens egne bookinger når alle bookinger opdateres
   useEffect(() => {
     const user = auth.currentUser;
     if (!user) return;
@@ -51,6 +56,7 @@ export default function MyBookingsScreen() {
     setMyBookings(mine);
   }, [allBookings]);
 
+  //Funktion til at slette en booking
   async function deleteBooking(booking) {
     Alert.alert('Slet booking', 'Er du sikker?', [
       { text: 'Annullér', style: 'cancel' },

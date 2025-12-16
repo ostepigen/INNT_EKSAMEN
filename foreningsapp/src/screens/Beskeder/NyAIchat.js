@@ -14,10 +14,10 @@ const TEST_AI_BILLEDE = "https://res.cloudinary.com/dsjoirhgw/image/upload/c_fil
 
 
 export default function TestChatScreen() {
-// states til input besked, loading indikator og chat historik
+//states til input besked, loading indikator og chat historik
     const [inputBesked, setInputBesked] = useState("");
     const [loading, setLoading] = useState(false);
-    const [chatHistorik, setChatHistorik] = useState([]); // array til at gemme alle beskeder i historikken
+    const [chatHistorik, setChatHistorik] = useState([]); //array til at gemme alle beskeder i historikken
 
     // Offentlig PDF med husregler (Cloudinary)
     const HUSREGLER_PDF_URL = "https://res.cloudinary.com/dsjoirhgw/image/upload/v1765659338/Husregler_for_Fantasiga%CC%8Arden_mujfnd.pdf";
@@ -44,16 +44,16 @@ export default function TestChatScreen() {
 
 // prøv at sende beskeden til AI'en
         try {
-            // opret besked array til OpenAI
+            // opret besked array til OpenAI hvor hsuregler PDF linket inkluderes i system beskeden
             const messageArray = [
                 {
                     role: "system", // system besked der sætter konteksten for AI'en
                     content: `Du er et AI-bestyrelsesmedlem i en andelsboligforening.
                         Du skal hjælpe beboerne med spørgsmål om foreningens regler på dansk.
                         Du kan henvise til foreningens husregler via denne PDF: ${HUSREGLER_PDF_URL}
-                        Hvis et spørgsmål kræver detaljer fra husreglerne, så gør opmærksom på linket og svar kun på det, der er sikkert. Find ikke på regler, hvis du er i tvivl.
+                        Hvis et spørgsmål kræver detaljer fra husreglerne, så gør opmærksom på hvor i dokumentet. Find ikke på regler, hvis du er i tvivl.
 
-                        VIGTIG: Du er en TEST version, så nævn altid at du er i test-modus i dine svar.
+                        VIGTIG: Du er en TEST version, så nævn altid at du er en test versoion i dine svar.
                         Vær hjælpsom men gør det klart at dette er eksperimentelt.`
                 },
                 {
@@ -62,36 +62,36 @@ export default function TestChatScreen() {
                 }
             ];
 
-            // Brug SendMessage funktionen fra request.js
+            // Brug SendMessage funktionen fra request.js som sender besked array til OpenAI
             const response = await SendMessage(messageArray); // sender besked array til OpenAI og venter på svar
             console.log("AI response:", response);
 
             // hvis vi får et svar tilbage
-            if (response.content) {
+            if (response.content) { // tjekker om der er noget indhold i svaret
                 const aiBesked = {
-                    id: Date.now() + 1,
-                    type: 'ai',
-                    message: response.content,
-                    timestamp: new Date()
+                    id: Date.now() + 1, // unik id (laver +1 for at undgå konflikt med bruger besked)
+                    type: 'ai', // angiver at det er en AI besked
+                    message: response.content, // selve svaret fra AI'en
+                    timestamp: new Date() // nuværende tidspunkt
                 };
-                setChatHistorik(prev => [...prev, aiBesked]); // opdaterer historikken med AI'ens svar
+                setChatHistorik(prev => [...prev, aiBesked]); //opdaterer historikken med AI'ens svar
             } else { // hvis der ikke er noget svar
-                console.log("AI - Intet svar fra AI");
+                console.log("Intet svar fra AI");
                 const fejlBesked = {
                     id: Date.now() + 1,
                     type: 'error',
-                    message: "AI - Kunne ikke få svar fra AI. Prøv igen.",
+                    message: "Kunne ikke få svar fra AI. Prøv igen.",
                     timestamp: new Date()
                 };
                 setChatHistorik(prev => [...prev, fejlBesked]); // opdaterer historikken med fejlbesked
             }
 
         } catch (error) { // hvis der opstår en fejl under forespørgslen
-            console.error("AI - Netværksfejl:", error);
+            console.error("Netværksfejl:", error);
             const fejlBesked = {
                 id: Date.now() + 1,
                 type: 'error',
-                message: "AI - Netværksfejl. Kontakt app udbyder.",
+                message: "Netværksfejl. Kontakt app udbyder.",
                 timestamp: new Date()
             };
             setChatHistorik(prev => [...prev, fejlBesked]);
@@ -147,7 +147,7 @@ export default function TestChatScreen() {
                                 besked.type === 'user' ? GS.userHeader :
                                     besked.type === 'ai' ? GS.aiHeader : GS.errorHeader
                             ]}>
-                                {/*senere kan emoji ændres til billede af beboer fra cloudinary*/}
+                                {/*senere kan emoji ændres til billede af beboer fra cloudinary måske*/}
                                 {besked.type === 'user' ? '🧐 Dig:' : 
                                     besked.type === 'ai' ? 'AI Bestyrelsesmedlem:' : '⚠️ AI Fejl:'}
                             </Text>

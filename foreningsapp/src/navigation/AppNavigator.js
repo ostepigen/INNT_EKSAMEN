@@ -1,1 +1,0 @@
-// samler alle navigators et sted?? slet måske 

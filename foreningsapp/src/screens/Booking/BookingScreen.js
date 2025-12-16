@@ -1,13 +1,17 @@
+//denne fil er til booking skærmen hvor brugeren kan vælge hvad de vil booke
 import React from 'react';
 import { View, Text, Pressable, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import GS, { SPACING, cardVariant } from '../../styles/globalstyles';
 
+//Definere de faciliteter der kan bookes (hardcoded for nuværende, men kan hentes fra database i fremtiden)
+// da det vil være forskelligt fra forening til forening hvad der kan bookes
 const RESOURCES = [
   { id: 'laundry', label: 'Vaskekælder' },
   { id: 'room',    label: 'Fælleslokale' },
 ];
 
+//viser booking skærmen
 export default function BookingScreen({ navigation }) {
   return (
     <SafeAreaView style={GS.screen} edges={['left', 'right', 'bottom']}>

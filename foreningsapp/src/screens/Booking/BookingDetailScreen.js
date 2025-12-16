@@ -9,7 +9,7 @@ import GS, { SPACING, COLORS } from '../../styles/globalstyles';
 
 const fmtDate = (d) => `${d.getDate()}.${d.getMonth() + 1}.${d.getFullYear()}`;
 
-// Tidsintervaller for vaskekælder
+// hardcoded tidsintervaller for vaskekælder
 const LAUNDRY_SLOTS = [
   { start: 7, end: 10, label: '07:00 - 10:00' },
   { start: 10, end: 13, label: '10:00 - 13:00' },
@@ -28,21 +28,23 @@ export default function BookingDetailScreen() {
   const { params } = useRoute();
   const resource = params?.resource || { id: 'unknown', label: 'Ressource' };
 
+  // Tjek hvilken facilitet der er tale om
   const isLaundry = resource.id === 'laundry';
   const isRoom = resource.id === 'room';
 
-  // Laundry states
+  //vaskekælder states
   const [date, setDate] = useState(new Date());
   const [showDate, setShowDate] = useState(false);
   const [selectedSlot, setSelectedSlot] = useState(null);
 
-  // Room states (calendar)
+  //fælleslokale states
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [selectedDay, setSelectedDay] = useState(null);
 
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(false);
 
+  // Hent bookings for den valgte ressource
   useEffect(() => {
     const unsub = userService.listenToBookings(resource.id, (data) => {
       const list = data ? Object.keys(data).map(k => ({ id: k, ...data[k] })) : [];
@@ -51,7 +53,7 @@ export default function BookingDetailScreen() {
     return () => unsub();
   }, [resource.id]);
 
-  // Laundry methods
+  //vaskekælder metode til dato picker
   const onPickDate = (_, selected) => {
     setShowDate(Platform.OS === 'ios');
     if (selected) {
@@ -59,34 +61,34 @@ export default function BookingDetailScreen() {
       setSelectedSlot(null);
     }
   };
-
+  //vaskekælder metode til at tjekke om et tidsinterval er booket
   const isSlotBooked = (slot) => {
     const dateStr = fmtDate(date);
     return bookings.some(b => b.date === dateStr && b.startHour === slot.start && b.endHour === slot.end);
   };
 
-  // Room calendar methods
+  //fælleslokale metode til at tjekke om en dag er booket
   const isDayBooked = (day) => {
     const dateStr = `${day}.${currentMonth.getMonth() + 1}.${currentMonth.getFullYear()}`;
     return bookings.some(b => b.date === dateStr);
   };
-
+  //fælleslokale metode til at tjekke om en dag er booket af den nuværende bruger
   const isDayBookedByUser = (day) => {
     const dateStr = `${day}.${currentMonth.getMonth() + 1}.${currentMonth.getFullYear()}`;
     const user = auth.currentUser;
     return bookings.some(b => b.date === dateStr && b.userId === user?.uid);
   };
-
+  //fælleslokale metoder til at navigere mellem måneder
   const handlePrevMonth = () => {
     setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1));
     setSelectedDay(null);
   };
-
+  //fælleslokale metoder til at navigere mellem måneder
   const handleNextMonth = () => {
     setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1));
     setSelectedDay(null);
   };
-
+ //fælleslokale metode til at rendere kalenderen
   const renderCalendar = () => {
     const daysInMonth = getDaysInMonth(currentMonth);
     const firstDay = getFirstDayOfMonth(currentMonth);
@@ -94,13 +96,14 @@ export default function BookingDetailScreen() {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
-    
+    //tomme felter for at starte på korrekt ugedag
     for (let i = 0; i < firstDay; i++) {
       days.push(<View key={`empty-${i}`} style={{ width: '14.28%' }} />);
     }
 
-    // Days of month
+    //dage felter
     for (let day = 1; day <= daysInMonth; day++) {
+      // beregn om dagen er i fortiden, booket af bruger, booket af andre eller valgt
       const dayDate = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), day);
       dayDate.setHours(0, 0, 0, 0);
       const isPast = dayDate < today;
@@ -108,6 +111,7 @@ export default function BookingDetailScreen() {
       const bookedByOther = isDayBooked(day) && !bookedByUser;
       const selected = selectedDay === day;
 
+      //dagens felt
       days.push(
         <Pressable
           key={day}
@@ -134,6 +138,7 @@ export default function BookingDetailScreen() {
     return days;
   };
 
+//fælles metode til at gemme en booking
   async function saveBooking() {
     if (isLaundry && !selectedSlot) {
       Alert.alert('Fejl', 'Vælg venligst et tidspunkt');
@@ -175,7 +180,7 @@ export default function BookingDetailScreen() {
     }
   }
 
-  // Laundry screen
+  //særskilte skærm for vaskekælde
   if (isLaundry) {
     return (
       <View style={GS.screen}>
@@ -239,7 +244,7 @@ export default function BookingDetailScreen() {
     );
   }
 
-  // Room calendar screen
+  //skærm for fælleslokale
   if (isRoom) {
     return (
       <View style={GS.screen}>
@@ -283,7 +288,7 @@ export default function BookingDetailScreen() {
       </View>
     );
   }
-
+//hvis ingen kendt ressource
   return (
     <View style={GS.screen}>
       <View style={GS.content}>

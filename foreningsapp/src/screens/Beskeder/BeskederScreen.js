@@ -1,4 +1,3 @@
-//
 import React, { useEffect, useState } from "react";
 import { View, Text, ScrollView, TouchableOpacity, Image } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -9,59 +8,74 @@ import { onAuthStateChanged } from 'firebase/auth';
 import userService from '../../services/firebase/userService';
 
 
-//AI billede fra Cloudinary (af en kvinde, som er bestyrelsesmedlem)
+// AI billede fra Cloudinary (af en kvinde, som er bestyrelsesmedlem)
 const TEST_AI_BILLEDE = "https://res.cloudinary.com/dsjoirhgw/image/upload/c_fill,w_50,h_50,q_auto/v1759848969/Sk%C3%A6rmbillede_2025-10-07_kl._16.54.16_kyuxcc.png";
 
-
-
+// Beskeder skærmkomponent
 export default function BeskederScreen({ navigation }) {
+    // states til modtagede og sendte beskeder samt brugerkort
     const [received, setReceived] = useState([]);
     const [sent, setSent] = useState([]);
     const [users, setUsers] = useState({});
-    const [expandedSection, setExpandedSection] = useState(null); // 'received' or 'sent'
+    // state til at holde styr på hvilken sektion der er udvidet
+    const [expandedSection, setExpandedSection] = useState(null);
 
+    // Opsæt lyttere til beskeder for nuværende bruger og ryd op ved logout
     useEffect(() => {
+        //references til unsubscribe funktioner
         let unsubMessages = null;
         let unsubSent = null;
-        let unsubAuth = null;
-        unsubAuth = onAuthStateChanged(auth, async (u) => {
+
+        //funktion til at rydde hvis brugeren logger ud eller skifter
+        const cleanupSubs = () => {
+            if (unsubMessages) unsubMessages();
+            if (unsubSent) unsubSent();
+            unsubMessages = null;
+            unsubSent = null;
+        };
+        //lyt til auth ændringer
+        const unsubAuth = onAuthStateChanged(auth, async (u) => {
+            // Stop lyttere hvis bruger logger ud eller skifter
+            cleanupSubs();
+            // Hvis ingen bruger, nulstil states
             if (!u) {
                 setReceived([]); setSent([]); setUsers({});
                 return;
             }
+            // Hvis bruger er logget ind, sæt op lyttere
             const uid = u.uid;
-            // load users map for name lookups
+            // Hent alle brugere fra Firebase for at mappe uid til navne
             try {
                 const all = await userService.getAllUsers();
-                const map = all ? Object.keys(all).reduce((acc,k) => { acc[k] = all[k]; return acc; }, {}) : {};
-                setUsers(map);
+                const map = all ? Object.keys(all).reduce((acc,k) => { acc[k] = all[k]; return acc; }, {}) : {}; // uid -> bruger objekt
+                setUsers(map); //sætter brugerkort i state
             } catch (e) {
                 console.warn('Failed loading users map', e);
             }
-
+            // Opsæt lyttere til modtagede og sendte beskeder
             unsubMessages = userService.listenToMessages(uid, (data) => {
-                const list = data ? Object.keys(data).map(k => ({ id: k, ...data[k] })) : [];
-                list.sort((a,b) => (b.createdAt || 0) - (a.createdAt || 0));
+                const list = data ? Object.keys(data).map(k => ({ id: k, ...data[k] })) : []; // konverter data objekt til array
+                list.sort((a,b) => (b.createdAt || 0) - (a.createdAt || 0)); // sorter efter createdAt 
                 setReceived(list);
             });
 
             unsubSent = userService.listenToSentMessages(uid, (data) => {
-                const list = data ? Object.keys(data).map(k => ({ id: k, ...data[k] })) : [];
-                list.sort((a,b) => (b.createdAt || 0) - (a.createdAt || 0));
+                const list = data ? Object.keys(data).map(k => ({ id: k, ...data[k] })) : []; // konverter data objekt til array
+                list.sort((a,b) => (b.createdAt || 0) - (a.createdAt || 0)); // sorter efter createdAt
                 setSent(list);
             });
         });
 
         return () => {
-            if (unsubMessages) unsubMessages();
-            if (unsubSent) unsubSent();
+            cleanupSubs();
             if (unsubAuth) unsubAuth();
         };
     }, []);
 
-    // Filter ulæste beskeder (dem uden 'read' flag eller read=false)
+    //Filter ulæste beskeder (dem uden 'read' flag eller read=false)
     const unreadMessages = received.filter(m => !m.read);
 
+    //Markér en specifik besked som læst for den aktuelle bruger
     const handleMarkAsRead = async (messageId) => {
         try {
             const uid = auth.currentUser?.uid;
@@ -71,7 +85,7 @@ export default function BeskederScreen({ navigation }) {
             console.warn('Failed marking message as read', e);
         }
     };
-
+    // render funktionen hihi
     return (
         <SafeAreaView style={GS.beskederContainer} edges={['left', 'right', 'bottom']}>
             <ScrollView style={GS.beskederScrollView} contentInsetAdjustmentBehavior="never">
@@ -139,7 +153,7 @@ export default function BeskederScreen({ navigation }) {
                     </View>
 
 
-                    {/* Modtagede beskeder - expandable */}
+                    {/* Modtagede beskeder. man kan folde ud */}
                     <TouchableOpacity 
                         style={[GS.messageItem, { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }]}
                         onPress={() => setExpandedSection(expandedSection === 'received' ? null : 'received')}
@@ -168,7 +182,7 @@ export default function BeskederScreen({ navigation }) {
                     )}
 
 
-                    {/* Sendte beskeder - expandable */}
+                    {/* Sendte beskeder. man kan folde ud */}
                     <TouchableOpacity 
                         style={[GS.messageItem, { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }]}
                         onPress={() => setExpandedSection(expandedSection === 'sent' ? null : 'sent')}

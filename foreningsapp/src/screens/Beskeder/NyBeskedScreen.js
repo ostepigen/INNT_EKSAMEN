@@ -8,7 +8,10 @@ import userService from '../../services/firebase/userService';
 import { auth } from '../../services/firebase/db';
 import { onAuthStateChanged } from 'firebase/auth';
 
+
 export default function NyBeskedScreen({ navigation }) {
+
+    // State variabler til emne, besked, loading status, brugerliste, dropdown visning og modtager UID
     const [emne, setEmne] = useState("");
     const [besked, setBesked] = useState("");
     const [loading, setLoading] = useState(false);
@@ -16,9 +19,10 @@ export default function NyBeskedScreen({ navigation }) {
     const [showDropdown, setShowDropdown] = useState(false);
     const [recipientUid, setRecipientUid] = useState(null);
 
-    useEffect(() => {
-        let mounted = true;
+    useEffect(() => { // Hent alle brugere for at kunne vælge modtager
+        let mounted = true; // flag for at undgå state opdatering efter unmount
         const unsubAuth = onAuthStateChanged(auth, async (u) => {
+            // Hvis ikke logget ind, ryd brugerliste og modtager
             if (!u) {
                 if (mounted) {
                     setUsers([]);
@@ -26,6 +30,7 @@ export default function NyBeskedScreen({ navigation }) {
                 }
                 return;
             }
+            // Hent alle brugere fra databasen
             try {
                 const data = await userService.getAllUsers();
                 const list = data ? Object.keys(data).map((k) => ({ uid: k, ...data[k] })) : [];
@@ -42,6 +47,7 @@ export default function NyBeskedScreen({ navigation }) {
         return () => { mounted = false; unsubAuth(); };
     }, []);
 
+    // Funktion til at sende besked
     const sendBesked = async () => {
         if (!emne.trim() || !besked.trim()) {
             Alert.alert("Fejl", "Udfyld venligst både emne og besked");
@@ -52,18 +58,19 @@ export default function NyBeskedScreen({ navigation }) {
             return;
         }
         setLoading(true);
-        
+        // Forsøg at sende beskeden
         try {
             const senderUid = auth.currentUser?.uid;
-            if (!senderUid) throw new Error('Ikke logget ind');
+            if (!senderUid) throw new Error('Ikke logget ind'); //Tjek om bruger er logget ind
             const payload = {
                 senderUid,
                 recipientUid,
                 subject: emne,
                 text: besked,
             };
-            await userService.pushMessage(recipientUid, payload);
+            await userService.pushMessage(recipientUid, payload); //Send besked via userService
 
+            //Vis bekræftelse til bruger og gå tilbage
             Alert.alert(
                 "Besked sendt",
                 "Din besked er sendt",
