@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, ScrollView, TouchableOpacity } from "react-native";
+import { View, Text, ScrollView, TouchableOpacity, Image } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import GS, { SPACING } from "../../styles/globalstyles";
 import { onAuthStateChanged } from 'firebase/auth';
@@ -87,6 +87,16 @@ export default function ForsideScreen({ navigation }) {
                             <Text style={GS.help}>
                                 {opslag.createdAt ? new Date(opslag.createdAt).toLocaleString() : ''}
                             </Text>
+                            
+                            {/* Vis billede hvis der er et */}
+                            {opslag.imageUrl && (
+                                <Image 
+                                    source={{ uri: opslag.imageUrl }} 
+                                    style={{ width: '100%', height: 200, borderRadius: 8, marginVertical: SPACING.md }}
+                                    resizeMode="cover"
+                                />
+                            )}
+                            
                             <Text style={{ marginTop: SPACING.sm, color: '#222' }}>{opslag.text}</Text>
                             <Text style={[GS.help, { marginTop: SPACING.sm }]}>Oprettet af: {opslag.senderName}</Text>
                         </View>

@@ -5,7 +5,6 @@ import React, { useEffect, useState, useRef } from "react";
 import { View, Text, ScrollView, TouchableOpacity, KeyboardAvoidingView, Platform, Image } from "react-native";
 import { TextInput } from "react-native-gesture-handler";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { API_KEY } from '../../config/apiConfig';
 import GS from "../../styles/globalstyles";
 import SendMessage from "../../services/request";
 

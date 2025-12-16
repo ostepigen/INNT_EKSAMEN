@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Alert, Switch, ActivityIndicator } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, Alert, Switch, ActivityIndicator, Image, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import GS from '../../styles/globalstyles';
+import { Ionicons } from '@expo/vector-icons';
+import GS, { COLORS, SPACING } from '../../styles/globalstyles';
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from '../../services/firebase/db';
 import userService from '../../services/firebase/userService';
+import * as ImagePicker from 'expo-image-picker';
 
 export default function NyOpslagScreen({ navigation }) {
     const [title, setTitle] = useState('');
@@ -13,6 +15,45 @@ export default function NyOpslagScreen({ navigation }) {
     const [important, setImportant] = useState(false);
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(false);
+    const [imageUri, setImageUri] = useState(null);
+
+    const pickImage = async () => {
+        const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        if (status !== 'granted') {
+            Alert.alert('Tilladelse nødvendig', 'Vi har brug for adgang til dine billeder');
+            return;
+        }
+
+        const result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            allowsEditing: true,
+            aspect: [4, 3],
+            quality: 0.8,
+        });
+
+        if (!result.canceled) {
+            setImageUri(result.assets[0].uri);
+        }
+    };
+
+    const takePhoto = async () => {
+        const { status } = await ImagePicker.requestCameraPermissionsAsync();
+        if (status !== 'granted') {
+            Alert.alert('Tilladelse nødvendig', 'Vi har brug for adgang til dit kamera');
+            return;
+        }
+
+        const result = await ImagePicker.launchCameraAsync({
+            allowsEditing: true,
+            aspect: [4, 3],
+            quality: 0.8,
+        });
+
+        if (!result.canceled) {
+            setImageUri(result.assets[0].uri);
+        }
+    };
+
 
     useEffect(() => {
         const unsub = onAuthStateChanged(auth, (u) => {
@@ -24,14 +65,40 @@ export default function NyOpslagScreen({ navigation }) {
     const onSave = async () => {
         if (!user) return Alert.alert('Fejl', 'Du skal være logget ind for at lave opslag.');
         if (!title || !text) return Alert.alert('Udfyld', 'Overskrift og tekst er påkrævet.');
+        
         setLoading(true);
         try {
+            let imageUrl = null;
+            
+            // Upload billede til Cloudinary hvis der er valgt et
+            if (imageUri) {
+                const formData = new FormData();
+                formData.append('file', {
+                    uri: imageUri,
+                    type: 'image/jpeg',
+                    name: 'opslag.jpg'
+                });
+                formData.append('upload_preset', 'opslag_upload');
+                
+                const cloudinaryResponse = await fetch(
+                    'https://api.cloudinary.com/v1_1/dsjoirhgw/image/upload',
+                    {
+                        method: 'POST',
+                        body: formData,
+                    }
+                );
+                
+                const cloudinaryData = await cloudinaryResponse.json();
+                imageUrl = cloudinaryData.secure_url;
+            }
+            
             const opslag = {
                 title,
                 text,
                 important: !!important,
                 senderUid: user.uid,
                 senderName: user.displayName || user.email?.split('@')[0] || 'Bruger',
+                imageUrl: imageUrl, // Tilføj billede URL
                 // createdAt will be added by userService.pushOpslag
             };
             await userService.pushOpslag(opslag);
@@ -52,30 +119,108 @@ export default function NyOpslagScreen({ navigation }) {
     );
 
     return (
-        <SafeAreaView style={GS.container}>
-            <View style={{ padding: 16 }}>
-                <Text style={GS.h2}>Lav nyt opslag</Text>
+        <SafeAreaView style={GS.screen} edges={['left', 'right', 'bottom']}>
+            <ScrollView contentContainerStyle={GS.content}>
+                <Text style={[GS.h1, { marginBottom: SPACING.xl }]}>Lav nyt opslag</Text>
 
-                <Text style={GS.label}>Overskrift</Text>
-                <TextInput style={GS.textInput} value={title} onChangeText={setTitle} placeholder="F.eks. Generalforsamling" />
+                <View style={GS.listCard}>
+                    <View style={{ paddingHorizontal: SPACING.lg, paddingVertical: SPACING.md }}>
+                        <Text style={GS.label}>Overskrift</Text>
+                        <TextInput 
+                            style={GS.valueBox} 
+                            value={title} 
+                            onChangeText={setTitle} 
+                            placeholder="F.eks. Generalforsamling"
+                            placeholderTextColor={COLORS.subtext}
+                        />
+                    </View>
 
-             
-                {/* Dato og tid sættes automatisk og kan ikke redigeres af brugeren */}
+                    <View style={GS.listRowDivider} />
 
+                    <View style={{ paddingHorizontal: SPACING.lg, paddingVertical: SPACING.md }}>
+                        <Text style={GS.label}>Tekst</Text>
+                        <TextInput 
+                            style={[GS.valueBox, { height: 120, textAlignVertical: 'top', paddingTop: SPACING.md }]} 
+                            value={text} 
+                            onChangeText={setText} 
+                            multiline 
+                            placeholder="Skriv dit opslag her"
+                            placeholderTextColor={COLORS.subtext}
+                        />
+                    </View>
 
-                <Text style={GS.label}>Tekst</Text>
-                <TextInput style={[GS.textInput, { height: 120 }]} value={text} onChangeText={setText} multiline placeholder="Skriv dit opslag her" />
+                    <View style={GS.listRowDivider} />
 
-                <View style={{ flexDirection: 'row', alignItems: 'center', marginVertical: 8 }}>
-                    <Text style={{ marginRight: 8 }}>Vigtig</Text>
-                    <Switch value={important} onValueChange={setImportant} />
+                    <View style={{ paddingHorizontal: SPACING.lg, paddingVertical: SPACING.md }}>
+                        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                <Ionicons name="alert-circle-outline" size={18} color={COLORS.primary} style={{ marginRight: SPACING.sm }} />
+                                <Text style={GS.label}>Markér som vigtig</Text>
+                            </View>
+                            <Switch value={important} onValueChange={setImportant} trackColor={{ true: COLORS.primary }} />
+                        </View>
+                    </View>
+
+                    <View style={GS.listRowDivider} />
+
+                    <View style={{ paddingHorizontal: SPACING.lg, paddingVertical: SPACING.md }}>
+                        <Text style={GS.label}>Billede (valgfrit)</Text>
+                        
+                        <View style={{ flexDirection: 'row', gap: SPACING.sm, marginTop: SPACING.sm }}>
+                            <TouchableOpacity 
+                                style={[GS.btnGhost, { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }]} 
+                                onPress={takePhoto}
+                            >
+                                <Ionicons name="camera-outline" size={20} color={COLORS.primary} style={{ marginRight: SPACING.sm }} />
+                                <Text style={GS.btnGhostText}>Tag billede</Text>
+                            </TouchableOpacity>
+
+                            <TouchableOpacity 
+                                style={[GS.btnGhost, { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }]} 
+                                onPress={pickImage}
+                            >
+                                <Ionicons name="images-outline" size={20} color={COLORS.primary} style={{ marginRight: SPACING.sm }} />
+                                <Text style={GS.btnGhostText}>Vælg fra galleri</Text>
+                            </TouchableOpacity>
+                        </View>
+
+                        {imageUri && (
+                            <View style={{ marginTop: SPACING.md }}>
+                                <Image 
+                                    source={{ uri: imageUri }} 
+                                    style={{ width: '100%', height: 200, borderRadius: SPACING.r }} 
+                                    resizeMode="cover"
+                                />
+                                <TouchableOpacity 
+                                    onPress={() => setImageUri(null)}
+                                    style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginTop: SPACING.sm }}
+                                >
+                                    <Ionicons name="close-circle" size={18} color={COLORS.danger} style={{ marginRight: SPACING.xs }} />
+                                    <Text style={{ color: COLORS.danger }}>Fjern billede</Text>
+                                </TouchableOpacity>
+                            </View>
+                        )}
+                    </View>
                 </View>
 
-                <TouchableOpacity style={[GS.button, GS.buttonPrimary]} onPress={onSave}>
-                    <Text style={GS.buttonPrimaryText}>Opret opslag</Text>
+                <View style={{ height: SPACING.xl }} />
+
+                <TouchableOpacity 
+                    style={[GS.btn, loading && { backgroundColor: COLORS.subtext }]} 
+                    onPress={onSave}
+                    disabled={loading}
+                >
+                    <Text style={GS.btnText}>{loading ? 'Opretter...' : 'Opret opslag'}</Text>
                 </TouchableOpacity>
 
-            </View>
+                <TouchableOpacity 
+                    style={[GS.btnGhost, { marginTop: SPACING.lg }]} 
+                    onPress={() => navigation.goBack()}
+                    disabled={loading}
+                >
+                    <Text style={GS.btnGhostText}>Annuller</Text>
+                </TouchableOpacity>
+            </ScrollView>
         </SafeAreaView>
     );
 }

@@ -18,6 +18,7 @@ export default function BeskederScreen({ navigation }) {
     const [received, setReceived] = useState([]);
     const [sent, setSent] = useState([]);
     const [users, setUsers] = useState({});
+    const [expandedSection, setExpandedSection] = useState(null); // 'received' or 'sent'
 
     useEffect(() => {
         let unsubMessages = null;
@@ -57,6 +58,19 @@ export default function BeskederScreen({ navigation }) {
             if (unsubAuth) unsubAuth();
         };
     }, []);
+
+    // Filter ulæste beskeder (dem uden 'read' flag eller read=false)
+    const unreadMessages = received.filter(m => !m.read);
+
+    const handleMarkAsRead = async (messageId) => {
+        try {
+            const uid = auth.currentUser?.uid;
+            if (!uid) return;
+            await userService.markMessageAsRead(uid, messageId);
+        } catch (e) {
+            console.warn('Failed marking message as read', e);
+        }
+    };
 
     return (
         <SafeAreaView style={GS.beskederContainer} edges={['left', 'right', 'bottom']}>
@@ -100,38 +114,87 @@ export default function BeskederScreen({ navigation }) {
                     </TouchableOpacity>
 
 
-                    {/* View til modtagede beskeder */}
+                    {/* Ulæste beskeder - altid synlige */}
                     <View style={GS.beskederSection}>
-                        <Text style={GS.h2}>Modtagede beskeder</Text>
-                        {received.length === 0 ? (
-                            <Text style={GS.sectionPlaceholder}>Ingen modtagede beskeder</Text>
+                        <Text style={GS.h2}>Ulæste beskeder</Text>
+                        {unreadMessages.length === 0 ? (
+                            <Text style={GS.sectionPlaceholder}>Ingen ulæste beskeder</Text>
                         ) : (
-                            received.map(m => (
-                                <View key={m.id} style={GS.messageItem}>
-                                    <Text style={GS.messageSubject}>{m.subject}</Text>
-                                    <Text style={GS.messagePreview}>{m.text}</Text>
-                                    <Text style={GS.messageMeta}>Fra: {users[m.senderUid]?.name || m.senderUid} • {m.createdAt ? new Date(m.createdAt).toLocaleString() : ''}</Text>
+                            unreadMessages.map(m => (
+                                <View key={m.id} style={[GS.messageItem, { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }]}>
+                                    <View style={{ flex: 1 }}>
+                                        <Text style={GS.messageSubject}>{m.subject}</Text>
+                                        <Text style={GS.messagePreview}>{m.text}</Text>
+                                        <Text style={GS.messageMeta}>Fra: {users[m.senderUid]?.name || m.senderUid} • {m.createdAt ? new Date(m.createdAt).toLocaleString() : ''}</Text>
+                                    </View>
+                                    <TouchableOpacity 
+                                        onPress={() => handleMarkAsRead(m.id)}
+                                        style={{ padding: 8, marginLeft: 8 }}
+                                    >
+                                        <Ionicons name="checkmark-circle-outline" size={24} color="#4CAF50" />
+                                    </TouchableOpacity>
                                 </View>
                             ))
                         )}
                     </View>
 
 
-                         {/* View til sendte beskeder */}
-                    <View style={GS.beskederSection}>
-                        <Text style={GS.h2}>Sendte beskeder</Text>
-                        {sent.length === 0 ? (
-                            <Text style={GS.sectionPlaceholder}>Ingen sendte beskeder</Text>
-                        ) : (
-                            sent.map(m => (
-                                <View key={m.id} style={GS.messageItem}>
-                                    <Text style={GS.messageSubject}>{m.subject}</Text>
-                                    <Text style={GS.messagePreview}>{m.text}</Text>
-                                    <Text style={GS.messageMeta}>Til: {users[m.recipientUid]?.name || m.recipientUid} • {m.createdAt ? new Date(m.createdAt).toLocaleString() : ''}</Text>
-                                </View>
-                            ))
-                        )}
-                    </View>
+                    {/* Modtagede beskeder - expandable */}
+                    <TouchableOpacity 
+                        style={[GS.messageItem, { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }]}
+                        onPress={() => setExpandedSection(expandedSection === 'received' ? null : 'received')}
+                    >
+                        <Text style={GS.h2}>Modtagede beskeder ({received.length})</Text>
+                        <Ionicons 
+                            name={expandedSection === 'received' ? "chevron-up" : "chevron-down"} 
+                            size={24} 
+                            color={GS.icon.color} 
+                        />
+                    </TouchableOpacity>
+                    {expandedSection === 'received' && (
+                        <View style={GS.beskederSection}>
+                            {received.length === 0 ? (
+                                <Text style={GS.sectionPlaceholder}>Ingen modtagede beskeder</Text>
+                            ) : (
+                                received.map(m => (
+                                    <View key={m.id} style={GS.messageItem}>
+                                        <Text style={GS.messageSubject}>{m.subject}</Text>
+                                        <Text style={GS.messagePreview}>{m.text}</Text>
+                                        <Text style={GS.messageMeta}>Fra: {users[m.senderUid]?.name || m.senderUid} • {m.createdAt ? new Date(m.createdAt).toLocaleString() : ''}</Text>
+                                    </View>
+                                ))
+                            )}
+                        </View>
+                    )}
+
+
+                    {/* Sendte beskeder - expandable */}
+                    <TouchableOpacity 
+                        style={[GS.messageItem, { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }]}
+                        onPress={() => setExpandedSection(expandedSection === 'sent' ? null : 'sent')}
+                    >
+                        <Text style={GS.h2}>Sendte beskeder ({sent.length})</Text>
+                        <Ionicons 
+                            name={expandedSection === 'sent' ? "chevron-up" : "chevron-down"} 
+                            size={24} 
+                            color={GS.icon.color} 
+                        />
+                    </TouchableOpacity>
+                    {expandedSection === 'sent' && (
+                        <View style={GS.beskederSection}>
+                            {sent.length === 0 ? (
+                                <Text style={GS.sectionPlaceholder}>Ingen sendte beskeder</Text>
+                            ) : (
+                                sent.map(m => (
+                                    <View key={m.id} style={GS.messageItem}>
+                                        <Text style={GS.messageSubject}>{m.subject}</Text>
+                                        <Text style={GS.messagePreview}>{m.text}</Text>
+                                        <Text style={GS.messageMeta}>Til: {users[m.recipientUid]?.name || m.recipientUid} • {m.createdAt ? new Date(m.createdAt).toLocaleString() : ''}</Text>
+                                    </View>
+                                ))
+                            )}
+                        </View>
+                    )}
                 </View>
             </ScrollView>
         </SafeAreaView>

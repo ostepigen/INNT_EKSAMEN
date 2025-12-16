@@ -98,6 +98,12 @@ export function listenToSentMessages(uid, cb) {
   return () => unsubscribe();
 }
 
+export async function markMessageAsRead(uid, messageId) {
+  if (!uid || !messageId) throw new Error('Missing uid or messageId');
+  const messageRef = ref(database, `${messagesPath(uid)}/${messageId}`);
+  await update(messageRef, { read: true });
+}
+
 // --- Bookings (global, visible to all users) ---
 const bookingsGlobalPath = (resourceId) => `bookings/${resourceId}`;
 
@@ -162,6 +168,7 @@ export default {
   getSentMessages,
   listenToMessages,
   listenToSentMessages,
+  markMessageAsRead,
   pushBooking,
   getBookings,
   listenToBookings,
