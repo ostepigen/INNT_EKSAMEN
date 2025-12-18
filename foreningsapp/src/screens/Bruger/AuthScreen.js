@@ -4,9 +4,9 @@ import Login from '../../components/Login';
 import SignUp from '../../components/SignUp';
 import GS from '../../styles/globalstyles';
 
-// Eksporterer 'AuthScreen', som håndterer skiftet mellem login og oprettelse
+// Eksporterer AuthScreen, som håndterer skiftet mellem login og oprettelse
 export default function AuthScreen() {
-// State-variabel der styrer, om brugeren ser login eller oprettelsesformularen
+//state-variabel der styrer, om brugeren ser login eller oprettelsesformularen
   const [isLogin, setIsLogin] = useState(true);
 
   return (

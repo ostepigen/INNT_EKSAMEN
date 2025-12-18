@@ -14,7 +14,7 @@ const TEST_OPSLAG = [
     { id: 3, title: "Nyt affaldssystem", content: "Fra d. 1. december indføres et nyt affaldssystem. Læs mere på foreningens hjemmeside.", bruger: "Admin", dato: "2025-10-03" },
 ];
 
-
+//Forside skærm med opslagstavle, fremhævede ting, brugertilpassede funktioner
 export default function ForsideScreen({ navigation }) {
     const [displayName, setDisplayName] = useState('');
     const [opslagList, setOpslagList] = useState([]);
@@ -27,7 +27,8 @@ export default function ForsideScreen({ navigation }) {
                 setDisplayName('');
                 return;
             }
-            setCurrentUserId(user.uid);
+            setCurrentUserId(user.uid); // Gem den aktuelle bruger-id
+            // Hent brugerprofil for at få navnet
             try {
                 const profile = await getUserProfile(user.uid);
                 if (profile && profile.name) {
@@ -62,7 +63,7 @@ export default function ForsideScreen({ navigation }) {
         });
         return () => unsub && unsub();
     }, []);
-
+    // håndter sletning af opslag
     const handleDeleteOpslag = (opslagId) => {
         Alert.alert(
             'Slet opslag',
@@ -79,7 +80,7 @@ export default function ForsideScreen({ navigation }) {
                             Alert.alert('Fejl', 'Kunne ikke slette opslaget: ' + err.message);
                         }
                     },
-                    style: 'destructive'
+                    style: 'destructive' // gør knappen rød
                 }
             ]
         );

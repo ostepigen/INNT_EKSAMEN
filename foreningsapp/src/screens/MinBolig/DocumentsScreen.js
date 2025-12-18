@@ -5,7 +5,9 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import GS from "../../styles/globalstyles";
 
+// viser dokumenter skærmen med mapper og antal filer
 export default function DocumentsScreen({ navigation }) {
+    // hardcodede mapper og dokumenter for nuværende
     const folders = [
         {
             key: 'vedtaegter',
@@ -73,7 +75,7 @@ export default function DocumentsScreen({ navigation }) {
             documents: []
         }
     ];
-
+    // håndter navigation til mappe detaljer
     const handleFolderPress = (folder) => {
         navigation.navigate('FolderDetail', { folder });
     };

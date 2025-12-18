@@ -7,7 +7,7 @@ import NyBeskedScreen from "../screens/Beskeder/NyBeskedScreen";
 import NyAIchat from "../screens/Beskeder/NyAIchat";
 
 const Stack = createStackNavigator();
-
+//beskedstck
 export default function BeskederStack() {
     return (
         <Stack.Navigator>

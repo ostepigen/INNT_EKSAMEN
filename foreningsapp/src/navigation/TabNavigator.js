@@ -10,7 +10,7 @@ import MinBoligStack from "./MinBoligStack";
 import BookingStack from "../navigation/BookingStack";
 
 const Tab = createBottomTabNavigator();
-
+//tab navigator (den nederste menu)
 export default function TabNavigator() {
     return (
         <Tab.Navigator

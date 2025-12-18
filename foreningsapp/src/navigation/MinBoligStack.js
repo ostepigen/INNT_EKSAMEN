@@ -11,7 +11,7 @@ import ProfilScreen from "../screens/MinBolig/ProfilScreen";
 import Økonomi from "../screens/MinBolig/Økonomi"
 
 const Stack = createStackNavigator();
-
+//stack til min bolig
 export default function MinBoligStack() {
 
     return (

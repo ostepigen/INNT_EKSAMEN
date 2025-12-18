@@ -5,7 +5,6 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 
 import GS, { COLORS, SPACING } from "../../styles/globalstyles";
-import MFS from "../../styles/minForeningStyles";
 
 export default function MinForeningScreen() {
     const [expandedId, setExpandedId] = useState(null);
@@ -49,39 +48,39 @@ export default function MinForeningScreen() {
 
     return (
         <SafeAreaView style={GS.screen} edges={['top', 'left', 'right', 'bottom']}>
-            <ScrollView contentContainerStyle={MFS.container} contentInsetAdjustmentBehavior="never">
+            <ScrollView contentContainerStyle={GS.mfsContainer} contentInsetAdjustmentBehavior="never">
                 
                 {/* Bestyrelse sektion */}
-                <View style={MFS.sectionHeader}>
+                <View style={GS.mfsSectionHeader}>
                     <Text style={GS.h1}>Bestyrelsen</Text>
                 </View>
 
                 {bestyrelse.map((section, index) => (
                     <TouchableOpacity
                         key={section.id}
-                        style={MFS.card}
+                        style={GS.mfsCard}
                         onPress={() => setExpandedId(expandedId === section.id ? null : section.id)}
                         activeOpacity={0.7}
                     >
-                        <View style={MFS.cardHeader}>
+                        <View style={GS.mfsCardHeader}>
                             <View style={{ flex: 1 }}>
-                                <Text style={MFS.cardTitle}>
+                                <Text style={GS.mfsCardTitle}>
                                     {section.title}
                                 </Text>
-                                <Text style={MFS.cardSubtitle}>
+                                <Text style={GS.mfsCardSubtitle}>
                                     {section.subtitle}
                                 </Text>
                             </View>
                             <Ionicons
                                 name={expandedId === section.id ? "chevron-up" : "chevron-down"}
-                                style={MFS.expandChevron}
+                                style={GS.mfsExpandChevron}
                             />
                         </View>
 
                         {expandedId === section.id && (
-                            <View style={MFS.cardContent}>
+                            <View style={GS.mfsCardContent}>
                                 {section.members.map((medlem, memberIndex) => (
-                                    <View key={memberIndex} style={MFS.memberBlock}>
+                                    <View key={memberIndex} style={GS.mfsMemberBlock}>
                                         <Text style={[GS.label, { color: COLORS.primary, marginBottom: SPACING.xs }]}>
                                             {medlem.rolle}
                                         </Text>
@@ -102,52 +101,52 @@ export default function MinForeningScreen() {
                 ))}
 
                 {/* Driftskontakter sektion */}
-                <View style={MFS.sectionHeader}>
+                <View style={GS.mfsSectionHeader}>
                     <Text style={GS.h1}>Driftskontakter</Text>
                 </View>
 
                 {driftskontakter.map((kontakt, index) => (
                     <TouchableOpacity
                         key={kontakt.id}
-                        style={[MFS.card, { marginBottom: SPACING.lg }]}
+                        style={[GS.mfsCard, { marginBottom: SPACING.lg }]}
                         onPress={() => toggleExpand(kontakt.id)}
                         activeOpacity={0.7}
                     >
                         {/* Header - Altid synlig */}
-                        <View style={MFS.cardHeader}>
+                        <View style={GS.mfsCardHeader}>
                             <View style={{ flex: 1 }}>
-                                <Text style={MFS.cardTitle}>
+                                <Text style={GS.mfsCardTitle}>
                                     {kontakt.title}
                                 </Text>
-                                <Text style={MFS.cardSubtitle}>
+                                <Text style={GS.mfsCardSubtitle}>
                                     {kontakt.subtitle}
                                 </Text>
                             </View>
                             <Ionicons
                                 name={expandedId === kontakt.id ? "chevron-up" : "chevron-down"}
-                                style={MFS.expandChevron}
+                                style={GS.mfsExpandChevron}
                             />
                         </View>
 
                         {/* Expandable content */}
                         {expandedId === kontakt.id && (
-                            <View style={MFS.cardContent}>
+                            <View style={GS.mfsCardContent}>
                                 {/* Email */}
                                 <View style={{ marginBottom: SPACING.lg }}>
-                                    <Text style={MFS.contactLabel}>
+                                    <Text style={GS.mfsContactLabel}>
                                         E-mail
                                     </Text>
-                                    <Text style={MFS.contactValue}>
+                                    <Text style={GS.mfsContactValue}>
                                         {kontakt.email}
                                     </Text>
                                 </View>
 
                                 {/* Telefon */}
                                 <View>
-                                    <Text style={MFS.contactLabel}>
+                                    <Text style={GS.mfsContactLabel}>
                                         Arbejdstelefon
                                     </Text>
-                                    <Text style={MFS.contactValue}>
+                                    <Text style={GS.mfsContactValue}>
                                         {kontakt.telefon}
                                     </Text>
                                 </View>

@@ -6,7 +6,7 @@ import BookingDetailScreen from '../screens/Booking/BookingDetailScreen';
 import MyBookingsScreen from '../screens/Booking/MyBookingsScreen';
 
 const Stack = createNativeStackNavigator();
-
+//booking stack
 export default function BookingStack() {
   return (
     <Stack.Navigator>

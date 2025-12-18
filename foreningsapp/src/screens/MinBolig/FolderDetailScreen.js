@@ -4,14 +4,16 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import GS from "../../styles/globalstyles";
 
+// viser detaljer for en specifik mappe med dokumenter
 export default function FolderDetailScreen({ route }) {
-    const { folder } = route.params;
+    const { folder } = route.params; // modtager mappe data fra navigation
 
+    // åbner dokument URL eller viser besked hvis ingen URL
     const openDocument = async (doc) => {
         if (doc.url) {
-            const supported = await Linking.canOpenURL(doc.url);
-            if (supported) {
-                await Linking.openURL(doc.url);
+            const supported = await Linking.canOpenURL(doc.url); // tjekker om URL kan åbnes
+            if (supported) { // åbner URL i browser
+                await Linking.openURL(doc.url); // åbner dokumentets URL i browser
             } else {
                 Alert.alert("Fejl", "Kan ikke åbne dokumentet");
             }

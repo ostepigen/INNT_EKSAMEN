@@ -3,7 +3,7 @@ import { View, Text, TextInput, TouchableOpacity, Alert } from 'react-native';
 import { signUpUser } from '../services/firebase/auth';
 import GS from '../styles/globalstyles';
 
-// Eksporterer komponenten 'SignUp', som håndterer oprettelse af nye brugere
+// Eksporterer komponenten SignUp, som håndterer oprettelse af nye brugere
 export default function SignUp() {
 // Opretter to state-variabler til at gemme brugerens input (email og kodeord)
   const [email, setEmail] = useState('');

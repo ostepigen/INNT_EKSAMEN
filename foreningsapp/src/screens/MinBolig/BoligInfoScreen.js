@@ -4,6 +4,7 @@ import { View, Text, ScrollView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import GS, { COLORS, SPACING } from "../../styles/globalstyles";
 
+// viser bolig informationer (hardcodet for mvp)
 export default function BoligInfoScreen() {
   return (
     <SafeAreaView edges={['top', 'left', 'right', 'bottom']} style={GS.screen}>

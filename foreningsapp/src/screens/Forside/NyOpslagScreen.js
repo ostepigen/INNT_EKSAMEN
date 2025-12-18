@@ -9,6 +9,7 @@ import { auth } from '../../services/firebase/db';
 import { pushOpslag, getUserProfile } from '../../services/firebase/userService';
 import * as ImagePicker from 'expo-image-picker';
 
+//viser skærmen til at lave et nyt opslag
 export default function NyOpslagScreen({ navigation }) {
     const [title, setTitle] = useState('');
     // date/time are set automatically on save (createdAt in DB) — not user-editable
@@ -90,8 +91,8 @@ export default function NyOpslagScreen({ navigation }) {
                     }
                 );
                 
-                const cloudinaryData = await cloudinaryResponse.json();
-                imageUrl = cloudinaryData.secure_url;
+                const cloudinaryData = await cloudinaryResponse.json(); // Hent den uploadede billed-URL
+                imageUrl = cloudinaryData.secure_url; // Gem URL til opslag objekt
             }
             
             const opslag = {
@@ -113,13 +114,13 @@ export default function NyOpslagScreen({ navigation }) {
             setLoading(false);
         }
     };
-
+    // Vis loading indikator mens opslag gemmes
     if (loading) return (
         <SafeAreaView style={GS.container}>
             <ActivityIndicator size="large" />
         </SafeAreaView>
     );
-
+// Hoved-UI for at oprette et nyt opslag
     return (
         <SafeAreaView style={GS.screen} edges={['top', 'left', 'right', 'bottom']}>
             <ScrollView contentContainerStyle={GS.content}>

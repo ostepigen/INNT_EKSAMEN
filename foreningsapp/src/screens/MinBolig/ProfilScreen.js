@@ -7,17 +7,21 @@ import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from '../../services/firebase/db';
 import { getUserProfile, setUserProfile } from '../../services/firebase/userService';
 
+// viser og redigerer brugerens profil informationer
 export default function ProfilScreen({ navigation }) {
+    // state til bruger, loading status, gemme status, profil data og redigerings status
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
     const [isSaving, setIsSaving] = useState(false);
     const [profile, setProfile] = useState({ name: '', address: '', phone: '', email: '' });
     const [isEditing, setIsEditing] = useState(false);
 
+    // lyt efter autentificerings ændringer og hent bruger profil
     useEffect(() => {
+        // sæt op lytter for autentificerings ændringer
         const unsub = onAuthStateChanged(auth, async (u) => {
             if (u) {
-                setUser(u);
+                setUser(u); // sæt den aktuelle bruger
                 try {
                     const data = await getUserProfile(u.uid);
                     if (data) setProfile((p) => ({ ...p, ...data }));
@@ -33,9 +37,9 @@ export default function ProfilScreen({ navigation }) {
         });
         return () => unsub();
     }, []);
-
+    // håndter ændringer i profil felter
     const onChange = (key, value) => setProfile((p) => ({ ...p, [key]: value }));
-
+    // håndter gemme profil data
     const onSave = async () => {
         if (!user) return Alert.alert('Fejl', 'Du skal være logget ind for at gemme din profil.');
         setIsSaving(true);
@@ -75,7 +79,6 @@ export default function ProfilScreen({ navigation }) {
                 contentInsetAdjustmentBehavior="never"
                 scrollIndicatorInsets={{ bottom: SPACING.sm }}
             >
-                
 
                 {/* Avatar og navn sektion */}
                 <View style={{ alignItems: 'center', marginBottom: SPACING.lg }}>

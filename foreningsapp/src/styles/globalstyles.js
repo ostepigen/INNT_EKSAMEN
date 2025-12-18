@@ -126,10 +126,6 @@ const GS = StyleSheet.create({
   },
 
 
-
-
-
-
   //nedstående skal rettes og ændre til gloable
   //AI-Chat styles
   chatContainer: {
@@ -474,6 +470,114 @@ const GS = StyleSheet.create({
   listRowDivider: {
     borderTopWidth: 1,
     borderTopColor: COLORS.border,
+  },
+
+  // MinBoligHome styles
+  mbhScreenContainer: {
+    paddingHorizontal: SPACING.xl,
+    paddingTop: SPACING.xl,
+    paddingBottom: SPACING.xxl,
+  },
+  mdhTitle: {
+    fontSize: 28,
+    fontWeight: '700',
+    color: COLORS.text,
+    marginBottom: SPACING.lg,
+  },
+  mdhCard: {
+    backgroundColor: COLORS.card,
+    borderRadius: SPACING.r,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    overflow: 'hidden',
+    ...SHADOW.card,
+  },
+  mdhRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: SPACING.xl,
+    paddingVertical: SPACING.lg,
+    backgroundColor: COLORS.card,
+  },
+  mdhRowDivider: {
+    borderTopWidth: 1,
+    borderTopColor: COLORS.border,
+  },
+  mdhRowTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: COLORS.text,
+  },
+  mdhRowSubtitle: {
+    fontSize: 14,
+    color: COLORS.textSecondary,
+  },
+  mdhRowTextContainer: {
+    flex: 1,
+  },
+  mdhChevron: {
+    fontSize: 20,
+    color: COLORS.icons,
+  },
+
+  // MinForening styles
+  mfsContainer: {
+    padding: SPACING.lg,
+  },
+  mfsSectionHeader: {
+    marginBottom: SPACING.xl,
+  },
+  mfsCard: {
+    backgroundColor: COLORS.card,
+    borderRadius: SPACING.r,
+    marginBottom: SPACING.xl,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    overflow: 'hidden',
+    ...SHADOW.card,
+  },
+  mfsCardHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: SPACING.lg,
+    backgroundColor: COLORS.card,
+  },
+  mfsCardTitle: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: COLORS.text,
+    marginBottom: SPACING.xs,
+  },
+  mfsCardSubtitle: {
+    fontSize: 14,
+    color: COLORS.subtext,
+  },
+  mfsExpandChevron: {
+    marginLeft: SPACING.md,
+    color: COLORS.primary,
+    fontSize: 24,
+  },
+  mfsCardContent: {
+    backgroundColor: '#f8f9fa',
+    paddingHorizontal: SPACING.lg,
+    paddingVertical: SPACING.md,
+    borderTopWidth: 1,
+    borderTopColor: COLORS.border,
+  },
+  mfsMemberBlock: {
+    marginBottom: SPACING.lg,
+  },
+  mfsContactLabel: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: COLORS.subtext,
+    marginBottom: SPACING.xs,
+  },
+  mfsContactValue: {
+    fontSize: 14,
+    color: COLORS.primary,
+    fontWeight: '500',
   },
 });
 

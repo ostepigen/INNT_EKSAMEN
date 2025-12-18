@@ -13,7 +13,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { logoutUser } from "../../services/firebase/auth";
 import GS, { COLORS, SPACING } from "../../styles/globalstyles";
 
-
+// viser hovedsiden for Min Bolig med navigation til undersider
 export default function MinBoligHome({ navigation }) {
   const rows = [
     {
@@ -45,7 +45,7 @@ export default function MinBoligHome({ navigation }) {
       navigateTo: 'Boligoplysninger',
     },
   ];
-
+  // håndterer bruger logout
   const handleLogout = async () => {
     try {
       await logoutUser();

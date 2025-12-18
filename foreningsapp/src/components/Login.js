@@ -3,7 +3,7 @@ import { View, Text, TextInput, TouchableOpacity, Alert } from 'react-native';
 import { loginUser } from '../services/firebase/auth';
 import GS from '../styles/globalstyles';
 
-// Eksporterer komponenten 'Login', som bruges til at håndtere brugerlogin 
+// Eksporterer komponenten Login, som bruges til at håndtere brugerlogin 
 export default function Login() {
 // Opretter to state-variabler til at gemme brugerens input (email og kodeord)
   const [email, setEmail] = useState('');
