@@ -9,12 +9,9 @@ import MinForeningScreen from "../screens/MinForening/MinForeningScreen";
 import MinBoligStack from "./MinBoligStack";
 import BookingStack from "../navigation/BookingStack";
 
-
-
-
 const Tab = createBottomTabNavigator();
 
-export default function TabNavigator({ enabled = true }) {
+export default function TabNavigator() {
     return (
         <Tab.Navigator
             screenOptions={({ route }) => ({
@@ -44,70 +41,35 @@ export default function TabNavigator({ enabled = true }) {
                 name="Forside"
                 component={ForsideScreen}
                 options={{
-                    tabBarButton: (props) => (
-                        <TouchableOpacity
-                            {...props}
-                            onPress={enabled ? props.onPress : undefined}
-                            activeOpacity={enabled ? 0.7 : 1}
-                            style={[props.style, !enabled && { opacity: 0.5 }]}
-                        />
-                    ),
+                    headerShown: false,
                 }}
             />
             <Tab.Screen
                 name="Beskeder"
                 component={BeskederStack}
                 options={{
-                    tabBarButton: (props) => (
-                        <TouchableOpacity
-                            {...props}
-                            onPress={enabled ? props.onPress : undefined}
-                            activeOpacity={enabled ? 0.7 : 1}
-                            style={[props.style, !enabled && { opacity: 0.5 }]}
-                        />
-                    ),
+                    headerShown: false,
                 }}
             />
             <Tab.Screen
                 name="Booking"
                 component={BookingStack}
                 options={{
-                    tabBarButton: (props) => (
-                        <TouchableOpacity
-                            {...props}
-                            onPress={enabled ? props.onPress : undefined}
-                            activeOpacity={enabled ? 0.7 : 1}
-                            style={[props.style, !enabled && { opacity: 0.5 }]}
-                        />
-                    ),
+                    headerShown: false,
                 }}
             />
             <Tab.Screen
                 name="Forening"
                 component={MinForeningScreen}
                 options={{
-                    tabBarButton: (props) => (
-                        <TouchableOpacity
-                            {...props}
-                            onPress={enabled ? props.onPress : undefined}
-                            activeOpacity={enabled ? 0.7 : 1}
-                            style={[props.style, !enabled && { opacity: 0.5 }]}
-                        />
-                    ),
+                    headerShown: false,
                 }}
             />
             <Tab.Screen
                 name="Mig"
                 component={MinBoligStack}
                 options={{
-                    tabBarButton: (props) => (
-                        <TouchableOpacity
-                            {...props}
-                            onPress={enabled ? props.onPress : undefined}
-                            activeOpacity={enabled ? 0.7 : 1}
-                            style={[props.style, !enabled && { opacity: 0.5 }]}
-                        />
-                    ),
+                    headerShown: false,
                 }}
             />
         </Tab.Navigator>

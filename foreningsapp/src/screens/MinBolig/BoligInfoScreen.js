@@ -6,7 +6,7 @@ import GS, { COLORS, SPACING } from "../../styles/globalstyles";
 
 export default function BoligInfoScreen() {
   return (
-    <SafeAreaView edges={['left', 'right', 'bottom']} style={GS.screen}>
+    <SafeAreaView edges={['top', 'left', 'right', 'bottom']} style={GS.screen}>
       <ScrollView contentContainerStyle={GS.content}>
         <Text style={[GS.h1, { marginBottom: SPACING.xl }]}>Min bolig</Text>
 

@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Alert } from 'react-native';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '../services/firebase/db';
+import { signUpUser } from '../services/firebase/auth';
 import GS from '../styles/globalstyles';
 
 // Eksporterer komponenten 'SignUp', som håndterer oprettelse af nye brugere
@@ -14,7 +13,7 @@ export default function SignUp() {
   const handleSignup = async () => {
     try {
       // Forsøger at oprette en ny bruger med e-mail og adgangskode
-      await createUserWithEmailAndPassword(auth, email, password);
+      await signUpUser(email, password);
       // Viser en bekræftelse til brugeren, når oprettelsen lykkes
       Alert.alert('Bruger oprettet!');
       // Nulstiller inputfelterne efter oprettelse
@@ -28,24 +27,26 @@ export default function SignUp() {
 
   // Returnerer komponentens visuelle layout
   return (
-    <View style={[GS.card, { margin: 20 }]}>
-      <Text style={GS.h2}>Opret bruger</Text>
+    <View style={[GS.card, { margin: 20, flex: 1, justifyContent: 'center' }]}>
+      <Text style={[GS.h2, { marginBottom: 30, textAlign: 'center' }]}>Opret bruger</Text>
       <TextInput
         placeholder="Email"
-        style={GS.input}
+        style={[GS.input, { fontSize: 16, paddingVertical: 15, marginBottom: 20 }]}
         value={email}
         onChangeText={setEmail}
         autoCapitalize="none"
+        placeholderTextColor="#999"
       />
       <TextInput
         placeholder="Kodeord"
-        style={GS.input}
+        style={[GS.input, { fontSize: 16, paddingVertical: 15, marginBottom: 30 }]}
         value={password}
         onChangeText={setPassword}
         secureTextEntry
+        placeholderTextColor="#999"
       />
-      <TouchableOpacity style={GS.btn} onPress={handleSignup}>
-        <Text style={GS.btnText}>Opret</Text>
+      <TouchableOpacity style={[GS.btn, { paddingVertical: 15 }]} onPress={handleSignup}>
+        <Text style={[GS.btnText, { fontSize: 18 }]}>Opret</Text>
       </TouchableOpacity>
     </View>
   );

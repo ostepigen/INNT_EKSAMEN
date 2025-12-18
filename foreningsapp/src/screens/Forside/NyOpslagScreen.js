@@ -6,7 +6,7 @@ import { Ionicons } from '@expo/vector-icons';
 import GS, { COLORS, SPACING } from '../../styles/globalstyles';
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from '../../services/firebase/db';
-import userService from '../../services/firebase/userService';
+import { pushOpslag, getUserProfile } from '../../services/firebase/userService';
 import * as ImagePicker from 'expo-image-picker';
 
 export default function NyOpslagScreen({ navigation }) {
@@ -101,9 +101,9 @@ export default function NyOpslagScreen({ navigation }) {
                 senderUid: user.uid,
                 senderName: user.displayName || user.email?.split('@')[0] || 'Bruger',
                 imageUrl: imageUrl, // Tilføj billede URL
-                // createdAt will be added by userService.pushOpslag
+                // createdAt will be added by pushOpslag
             };
-            await userService.pushOpslag(opslag);
+            await pushOpslag(opslag);
             Alert.alert('OK', 'Opslaget er oprettet');
             navigation.goBack();
         } catch (err) {
@@ -121,7 +121,7 @@ export default function NyOpslagScreen({ navigation }) {
     );
 
     return (
-        <SafeAreaView style={GS.screen} edges={['left', 'right', 'bottom']}>
+        <SafeAreaView style={GS.screen} edges={['top', 'left', 'right', 'bottom']}>
             <ScrollView contentContainerStyle={GS.content}>
                 <Text style={[GS.h1, { marginBottom: SPACING.xl }]}>Lav nyt opslag</Text>
 

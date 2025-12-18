@@ -1,8 +1,8 @@
 // src/screens/MainScreen.js
 import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
-import { signOut } from 'firebase/auth';
-import { auth } from '../services/firebase/db';
+import { auth } from '../../services/firebase/db';
+import { logoutUser } from '../../services/firebase/auth';
 import GS from '../styles/globalstyles';
 
 // Eksporterer komponenten 'MainScreen', som fungerer som hovedsiden efter login
@@ -13,7 +13,7 @@ export default function MainScreen() {
   // Funktion der håndterer logud-processen
   const handleLogout = async () => {
     try {
-      await signOut(auth);
+      await logoutUser();
     } catch (error) {
       console.error('Logout fejlede:', error.message);
     }

@@ -14,7 +14,7 @@ export default function AuthScreen() {
       {isLogin ? <Login /> : <SignUp />}
       <View style={{ margin: 20 }}>
         <Button
-          title={isLogin ? 'Har du ikke en konto? Opret en' : 'Har du en konto? Log ind'}
+          title={isLogin ? 'Klik her hvis du er ny' : 'Har du en konto? Log ind'}
           onPress={() => setIsLogin((prev) => !prev)}
           color="#255D32"
         />

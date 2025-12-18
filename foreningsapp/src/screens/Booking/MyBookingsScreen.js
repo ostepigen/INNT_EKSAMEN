@@ -3,8 +3,9 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, ScrollView, Pressable, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { auth } from '../../services/firebase/db';
-import userService from '../../services/firebase/userService';
+import { listenToBookings, deleteBooking } from '../../services/firebase/userService';
 import GS, { SPACING, COLORS } from '../../styles/globalstyles';
+import { useIsFocused } from '@react-navigation/native';
 
 //Definere de faciliteter der kan bookes (skal matche BookingScreen.js)
 const RESOURCES = [
@@ -23,7 +24,7 @@ export default function MyBookingsScreen() {
     if (!user) return;
 
     const unsubscribers = RESOURCES.map(resource => {
-      return userService.listenToBookings(resource.id, (data) => {
+      return listenToBookings(resource.id, (data) => {
         setAllBookings(prev => ({ ...prev, [resource.id]: data || {} }));
       });
     });
@@ -62,7 +63,7 @@ export default function MyBookingsScreen() {
       { text: 'Annullér', style: 'cancel' },
       { text: 'Slet', style: 'destructive', onPress: async () => {
         try {
-          await userService.deleteBooking(booking.resourceId, booking.id);
+          await deleteBooking(booking.resourceId, booking.id);
           Alert.alert('Slettet', 'Booking er fjernet');
         } catch (e) {
           Alert.alert('Fejl', e?.message || 'Kunne ikke slette booking');
@@ -72,7 +73,7 @@ export default function MyBookingsScreen() {
   }
 
   return (
-    <SafeAreaView style={GS.screen} edges={['left', 'right', 'bottom']}>
+    <SafeAreaView style={GS.screen} edges={['top', 'left', 'right', 'bottom']}>
       <ScrollView contentInsetAdjustmentBehavior="never">
         <View style={GS.content}>
           <Text style={[GS.h1, { marginBottom: SPACING.lg }]}>Mine bookinger</Text>

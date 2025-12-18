@@ -4,7 +4,7 @@ import { View, Text, TextInput, Pressable, Alert, KeyboardAvoidingView, Platform
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from '@expo/vector-icons';
 import GS, { COLORS, SPACING } from "../../styles/globalstyles";
-import userService from '../../services/firebase/userService';
+import { getAllUsers, pushMessage } from '../../services/firebase/userService';
 import { auth } from '../../services/firebase/db';
 import { onAuthStateChanged } from 'firebase/auth';
 
@@ -32,7 +32,7 @@ export default function NyBeskedScreen({ navigation }) {
             }
             // Hent alle brugere fra databasen
             try {
-                const data = await userService.getAllUsers();
+                const data = await getAllUsers();
                 const list = data ? Object.keys(data).map((k) => ({ uid: k, ...data[k] })) : [];
                 const me = u.uid;
                 const filtered = list.filter(user => user.uid !== me);
@@ -68,7 +68,7 @@ export default function NyBeskedScreen({ navigation }) {
                 subject: emne,
                 text: besked,
             };
-            await userService.pushMessage(recipientUid, payload); //Send besked via userService
+            await pushMessage(recipientUid, payload); //Send besked
 
             //Vis bekræftelse til bruger og gå tilbage
             Alert.alert(
@@ -90,7 +90,7 @@ export default function NyBeskedScreen({ navigation }) {
     };
 
     return (
-        <SafeAreaView edges={['left', 'right', 'bottom']} style={GS.screen}>
+        <SafeAreaView edges={['top', 'left', 'right', 'bottom']} style={GS.screen}>
             <KeyboardAvoidingView 
                 style={{ flex: 1 }}
                 behavior={Platform.OS === 'ios' ? 'padding' : 'height'}

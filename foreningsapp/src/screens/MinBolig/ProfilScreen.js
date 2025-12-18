@@ -5,7 +5,7 @@ import { Ionicons } from '@expo/vector-icons';
 import GS, { COLORS, SPACING } from '../../styles/globalstyles';
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from '../../services/firebase/db';
-import userService from '../../services/firebase/userService';
+import { getUserProfile, setUserProfile } from '../../services/firebase/userService';
 
 export default function ProfilScreen({ navigation }) {
     const [user, setUser] = useState(null);
@@ -19,7 +19,7 @@ export default function ProfilScreen({ navigation }) {
             if (u) {
                 setUser(u);
                 try {
-                    const data = await userService.getUserProfile(u.uid);
+                    const data = await getUserProfile(u.uid);
                     if (data) setProfile((p) => ({ ...p, ...data }));
                     if (!data?.email && u.email) setProfile((p) => ({ ...p, email: u.email }));
                 } catch (err) {
@@ -42,9 +42,15 @@ export default function ProfilScreen({ navigation }) {
         try {
             const toSave = { ...profile };
             if (!toSave.email && user.email) toSave.email = user.email;
-            await userService.setUserProfile(user.uid, toSave);
+            await setUserProfile(user.uid, toSave);
             Alert.alert('OK', 'Profil gemt');
             setIsEditing(false);
+            // Hvis brugeren kommer fra oprettelse (ingen navn før), naviger til Tabs
+            if (!profile.name || profile.name.trim() === '') {
+                setTimeout(() => {
+                    navigation.replace('Tabs');
+                }, 500);
+            }
         } catch (err) {
             console.warn(err);
             Alert.alert('Fejl ved gem', err.message || String(err));
@@ -90,7 +96,7 @@ export default function ProfilScreen({ navigation }) {
 
                     {/* Kun navn under avatar */}
                     <Text style={[GS.h2, { textAlign: 'center', marginBottom: SPACING.xs }]}>
-                        {profile.name || 'Dit navn'}
+                        {profile.name || user?.displayName || user?.email?.split('@')[0] || 'Dit navn'}
                     </Text>
                 </View>
 

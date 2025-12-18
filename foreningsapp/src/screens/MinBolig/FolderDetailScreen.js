@@ -21,7 +21,7 @@ export default function FolderDetailScreen({ route }) {
     };
 
     return (
-        <SafeAreaView style={GS.screen} edges={['left', 'right', 'bottom']}>
+        <SafeAreaView style={GS.screen} edges={['top', 'left', 'right', 'bottom']}>
             <ScrollView style={GS.beskederScrollView} contentInsetAdjustmentBehavior="never">
                 <View style={GS.content}>
                     <Text style={[GS.h1, { marginBottom: 8 }]}>{folder.title}</Text>

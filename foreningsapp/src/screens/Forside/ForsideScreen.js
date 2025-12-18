@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, ScrollView, TouchableOpacity, Image } from "react-native";
+import { View, Text, ScrollView, TouchableOpacity, Image, Alert } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import GS, { SPACING } from "../../styles/globalstyles";
+import { Ionicons } from "@expo/vector-icons";
+import GS, { SPACING, COLORS } from "../../styles/globalstyles";
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from '../../services/firebase/db';
-import userService from '../../services/firebase/userService';
+import { getUserProfile, listenToOpslag, deleteOpslag } from '../../services/firebase/userService';
 
 //lege data til opslagftavle
 const TEST_OPSLAG = [
@@ -17,15 +18,18 @@ const TEST_OPSLAG = [
 export default function ForsideScreen({ navigation }) {
     const [displayName, setDisplayName] = useState('');
     const [opslagList, setOpslagList] = useState([]);
+    const [currentUserId, setCurrentUserId] = useState(null);
 // Hent brugerens navn til velkomsthilsen
     useEffect(() => {
         const unsub = onAuthStateChanged(auth, async (user) => {
             if (!user) {
+                setCurrentUserId(null);
                 setDisplayName('');
                 return;
             }
+            setCurrentUserId(user.uid);
             try {
-                const profile = await userService.getUserProfile(user.uid);
+                const profile = await getUserProfile(user.uid);
                 if (profile && profile.name) {
                     setDisplayName(profile.name);
                 } else if (user.displayName) {
@@ -46,7 +50,7 @@ export default function ForsideScreen({ navigation }) {
 
     // listen for opslag in realtime
     useEffect(() => {
-        const unsub = userService.listenToOpslag((data) => {
+        const unsub = listenToOpslag((data) => {
             // data is an object keyed by id -> value
             const list = data ? Object.keys(data).map((k) => ({ id: k, ...data[k] })) : [];
             // sort so important first then by createdAt desc
@@ -59,8 +63,30 @@ export default function ForsideScreen({ navigation }) {
         return () => unsub && unsub();
     }, []);
 
+    const handleDeleteOpslag = (opslagId) => {
+        Alert.alert(
+            'Slet opslag',
+            'Er du sikker på, at du vil slette dette opslag?',
+            [
+                { text: 'Annuller', onPress: () => {}, style: 'cancel' },
+                {
+                    text: 'Slet',
+                    onPress: async () => {
+                        try {
+                            await deleteOpslag(opslagId);
+                            Alert.alert('Slettet', 'Opslaget er slettet');
+                        } catch (err) {
+                            Alert.alert('Fejl', 'Kunne ikke slette opslaget: ' + err.message);
+                        }
+                    },
+                    style: 'destructive'
+                }
+            ]
+        );
+    };
+
     return (
-        <SafeAreaView style={GS.screen} edges={['left', 'right', 'bottom']}>
+        <SafeAreaView style={GS.screen} edges={['top', 'left', 'right', 'bottom']}>
             <ScrollView contentInsetAdjustmentBehavior="never">
                 <View style={GS.content}>
                     {/* Velkomsthilsen */}
@@ -80,13 +106,25 @@ export default function ForsideScreen({ navigation }) {
                     </View>
 
                     {opslagList.map(opslag => (
-                        <View key={opslag.id} style={GS.opslagContainer}>
-                            <Text style={GS.label}>
-                                {opslag.title} {opslag.important ? '🔴' : ''}
-                            </Text>
-                            <Text style={GS.help}>
-                                {opslag.createdAt ? new Date(opslag.createdAt).toLocaleString() : ''}
-                            </Text>
+                        <View key={opslag.id} style={[GS.opslagContainer, opslag.important && { backgroundColor: '#fffacd' }]}>
+                            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                                <View style={{ flex: 1 }}>
+                                    <Text style={GS.label}>
+                                        {opslag.title}
+                                    </Text>
+                                    <Text style={GS.help}>
+                                        {opslag.createdAt ? new Date(opslag.createdAt).toLocaleString() : ''}
+                                    </Text>
+                                </View>
+                                {opslag.senderUid === currentUserId && (
+                                    <TouchableOpacity 
+                                        onPress={() => handleDeleteOpslag(opslag.id)}
+                                        style={{ padding: 8, marginLeft: 8 }}
+                                    >
+                                        <Ionicons name="trash-outline" size={20} color={COLORS.danger} />
+                                    </TouchableOpacity>
+                                )}
+                            </View>
                             
                             {/* Vis billede hvis der er et */}
                             {opslag.imageUrl && (
@@ -104,7 +142,7 @@ export default function ForsideScreen({ navigation }) {
                 </View>
             </ScrollView>
         </SafeAreaView>
-    )
+    );
 }
 
 //Forside skærm med opslagstavle, fremhævede ting, brugertilpassede funktioner

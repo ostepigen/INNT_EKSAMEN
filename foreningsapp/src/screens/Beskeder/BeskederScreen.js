@@ -5,7 +5,7 @@ import { Ionicons } from "@expo/vector-icons";
 import GS from "../../styles/globalstyles";
 import { auth } from '../../services/firebase/db';
 import { onAuthStateChanged } from 'firebase/auth';
-import userService from '../../services/firebase/userService';
+import { getAllUsers, listenToMessages, listenToSentMessages, markMessageAsRead } from '../../services/firebase/userService';
 
 
 // AI billede fra Cloudinary (af en kvinde, som er bestyrelsesmedlem)
@@ -46,20 +46,20 @@ export default function BeskederScreen({ navigation }) {
             const uid = u.uid;
             // Hent alle brugere fra Firebase for at mappe uid til navne
             try {
-                const all = await userService.getAllUsers();
+                const all = await getAllUsers();
                 const map = all ? Object.keys(all).reduce((acc,k) => { acc[k] = all[k]; return acc; }, {}) : {}; // uid -> bruger objekt
                 setUsers(map); //sætter brugerkort i state
             } catch (e) {
                 console.warn('Failed loading users map', e);
             }
             // Opsæt lyttere til modtagede og sendte beskeder
-            unsubMessages = userService.listenToMessages(uid, (data) => {
+            unsubMessages = listenToMessages(uid, (data) => {
                 const list = data ? Object.keys(data).map(k => ({ id: k, ...data[k] })) : []; // konverter data objekt til array
                 list.sort((a,b) => (b.createdAt || 0) - (a.createdAt || 0)); // sorter efter createdAt 
                 setReceived(list);
             });
 
-            unsubSent = userService.listenToSentMessages(uid, (data) => {
+            unsubSent = listenToSentMessages(uid, (data) => {
                 const list = data ? Object.keys(data).map(k => ({ id: k, ...data[k] })) : []; // konverter data objekt til array
                 list.sort((a,b) => (b.createdAt || 0) - (a.createdAt || 0)); // sorter efter createdAt
                 setSent(list);
@@ -80,14 +80,14 @@ export default function BeskederScreen({ navigation }) {
         try {
             const uid = auth.currentUser?.uid;
             if (!uid) return;
-            await userService.markMessageAsRead(uid, messageId);
+            await markMessageAsRead(uid, messageId);
         } catch (e) {
             console.warn('Failed marking message as read', e);
         }
     };
     // render funktionen hihi
     return (
-        <SafeAreaView style={GS.beskederContainer} edges={['left', 'right', 'bottom']}>
+        <SafeAreaView style={GS.beskederContainer} edges={['top', 'left', 'right', 'bottom']}>
             <ScrollView style={GS.beskederScrollView} contentInsetAdjustmentBehavior="never">
                 <View style={GS.beskederContent}>
                     <View style={GS.beskederHeader}>

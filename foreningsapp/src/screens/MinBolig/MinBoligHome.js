@@ -7,11 +7,11 @@
 // kalder de mindre komponenter 
 
 import React from "react";
-import { View, Text, ScrollView, TouchableOpacity } from "react-native";
+import { View, Text, ScrollView, TouchableOpacity, Alert } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
-
-import GS from "../../styles/globalstyles";
+import { logoutUser } from "../../services/firebase/auth";
+import GS, { COLORS, SPACING } from "../../styles/globalstyles";
 
 
 export default function MinBoligHome({ navigation }) {
@@ -46,8 +46,16 @@ export default function MinBoligHome({ navigation }) {
     },
   ];
 
+  const handleLogout = async () => {
+    try {
+      await logoutUser();
+    } catch (error) {
+      Alert.alert('Fejl', 'Logout fejlede: ' + error.message);
+    }
+  };
+
   return (
-    <SafeAreaView style={GS.beskederContainer} edges={['left', 'right', 'bottom']}>
+    <SafeAreaView style={GS.beskederContainer} edges={['top', 'left', 'right', 'bottom']}>
       <ScrollView style={GS.beskederScrollView} contentInsetAdjustmentBehavior="never">
         <View style={{ paddingHorizontal: GS.content.paddingHorizontal, paddingTop: GS.content.paddingTop, paddingBottom: GS.content.paddingBottom }}>
           <Text style={[GS.h1, { marginBottom: 24 }]}>Min bolig</Text>
@@ -66,6 +74,14 @@ export default function MinBoligHome({ navigation }) {
               <Ionicons name="chevron-forward" size={20} color={GS.icon.color} />
             </TouchableOpacity>
           ))}
+
+          <TouchableOpacity 
+            onPress={handleLogout}
+            style={[{ paddingVertical: 12, paddingHorizontal: 16, marginTop: 24, marginBottom: 12, flexDirection: 'row', alignItems: 'center', backgroundColor: COLORS.danger, borderRadius: 8 }]}
+          >
+            <Ionicons name="log-out-outline" size={22} color="#fff" style={{ marginRight: 12 }} />
+            <Text style={{ fontSize: 18, fontWeight: '600', color: '#fff', flex: 1 }}>Log ud</Text>
+          </TouchableOpacity>
         </View>
       </ScrollView>
     </SafeAreaView>

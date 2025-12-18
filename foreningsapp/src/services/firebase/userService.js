@@ -158,24 +158,10 @@ export function listenToOpslag(cb) {
   return () => unsubscribe();
 }
 
-export default {
-  setUserProfile,
-  updateUserProfile,
-  getUserProfile,
-  listenToUserProfile,
-  pushMessage,
-  getMessages,
-  getSentMessages,
-  listenToMessages,
-  listenToSentMessages,
-  markMessageAsRead,
-  pushBooking,
-  getBookings,
-  listenToBookings,
-  deleteBooking,
-  getAllUsers,
-  listenToUsers,
-  pushOpslag,
-  getOpslag,
-  listenToOpslag,
-};
+export async function deleteOpslag(opslagId) {
+  if (!opslagId) throw new Error('Missing opslagId');
+  const opslagRef = ref(database, `${opslagPath()}/${opslagId}`);
+  await set(opslagRef, null);
+}
+
+

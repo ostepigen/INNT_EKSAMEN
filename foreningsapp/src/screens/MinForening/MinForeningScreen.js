@@ -48,7 +48,7 @@ export default function MinForeningScreen() {
     };
 
     return (
-        <SafeAreaView style={GS.screen} edges={['left', 'right', 'bottom']}>
+        <SafeAreaView style={GS.screen} edges={['top', 'left', 'right', 'bottom']}>
             <ScrollView contentContainerStyle={MFS.container} contentInsetAdjustmentBehavior="never">
                 
                 {/* Bestyrelse sektion */}

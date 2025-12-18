@@ -14,7 +14,7 @@ const RESOURCES = [
 //viser booking skærmen
 export default function BookingScreen({ navigation }) {
   return (
-    <SafeAreaView style={GS.screen} edges={['left', 'right', 'bottom']}>
+    <SafeAreaView style={GS.screen} edges={['top', 'left', 'right', 'bottom']}>
       <ScrollView contentContainerStyle={[GS.content, { paddingBottom: SPACING.xl }]} contentInsetAdjustmentBehavior="never">
         <Text style={[GS.h1, { marginBottom: SPACING.lg }]}>Booking</Text>
         <Text style={[GS.help, { marginBottom: SPACING.xl }]}>Vælg hvad du vil booke</Text>

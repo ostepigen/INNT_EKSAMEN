@@ -4,7 +4,7 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import { auth } from '../../services/firebase/db';
-import userService from '../../services/firebase/userService';
+import { listenToBookings, getUserProfile, pushBooking } from '../../services/firebase/userService';
 import GS, { SPACING, COLORS } from '../../styles/globalstyles';
 
 const fmtDate = (d) => `${d.getDate()}.${d.getMonth() + 1}.${d.getFullYear()}`;
@@ -46,7 +46,7 @@ export default function BookingDetailScreen() {
 
   // Hent bookings for den valgte ressource
   useEffect(() => {
-    const unsub = userService.listenToBookings(resource.id, (data) => {
+    const unsub = listenToBookings(resource.id, (data) => {
       const list = data ? Object.keys(data).map(k => ({ id: k, ...data[k] })) : [];
       setBookings(list);
     });
@@ -157,7 +157,7 @@ export default function BookingDetailScreen() {
 
     setLoading(true);
     try {
-      const profile = await userService.getUserProfile(user.uid);
+      const profile = await getUserProfile(user.uid);
       
       const bookingData = {
         date: isLaundry ? fmtDate(date) : `${selectedDay}.${currentMonth.getMonth() + 1}.${currentMonth.getFullYear()}`,
@@ -170,7 +170,7 @@ export default function BookingDetailScreen() {
         bookingData.endHour = selectedSlot.end;
       }
 
-      await userService.pushBooking(resource.id, bookingData);
+      await pushBooking(resource.id, bookingData);
       Alert.alert('Gemt', 'Din booking er gemt.');
       navigation.navigate('MyBookings');
     } catch (e) {

@@ -79,7 +79,7 @@ export default function DocumentsScreen({ navigation }) {
     };
 
     return (
-        <SafeAreaView style={GS.screen} edges={['left', 'right', 'bottom']}>
+        <SafeAreaView style={GS.screen} edges={['top', 'left', 'right', 'bottom']}>
             <ScrollView style={GS.beskederScrollView} contentInsetAdjustmentBehavior="never">
                 <View style={GS.content}>
                     {folders.map((folder, index) => (
