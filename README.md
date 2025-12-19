@@ -7,4 +7,5 @@ Det er ikke meningen at en beboer skal kunne oprette en bruger selv i vores case
 Email: idasofie@test.dk
 Kodeord: IdaSofie123
 
-Link til demovideo: 
+Link til demovideo: https://youtu.be/BlIzz0IvEA0
+
